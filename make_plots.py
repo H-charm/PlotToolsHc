@@ -11,7 +11,6 @@ ROOT.gROOT.SetBatch(True)
 ROOT.gStyle.SetLegendBorderSize(0)
 ROOT.gStyle.SetTitleOffset(1.5, "Y") 
 ROOT.gStyle.SetOptStat(0)
-ROOT.gInterpreter.ProcessLine('#include "cpp_functions.C"')
 
 def draw_mc_only():
     config_file = config_plots.Config()
