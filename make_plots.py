@@ -26,6 +26,7 @@ def draw_mc_only():
     config_file.add_sample(name="WminusH", root_file="WminusH_tree.root",cuts=[])
     config_file.add_sample(name="WplusH", root_file="WplusH_tree.root",cuts=[])
     config_file.add_sample(name="ZH", root_file="ZH_tree.root",cuts=[])
+    config_file.add_sample(name="ZZ", root_file="ZZ_tree.root",cuts=[])
     config_file.add_sample(name="bbH", root_file="bbH_tree.root",cuts=[])
     config_file.add_sample(name="ggH", root_file="ggH_tree.root",cuts=[])
     config_file.add_sample(name="tqH", root_file="tqH_tree.root",cuts=[])
