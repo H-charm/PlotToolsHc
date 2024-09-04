@@ -62,7 +62,7 @@ class Config:
     
     self.output_plots_dir = "plots/"
     self.channels = [] 
-    self.base_dir = ##your tree directory
+    self.base_dir = "your_tree_directory"
     self.plot_format = "png"
     self.dataset_legend = "59.8 fb^{-1} (13 TeV)"
     self.plot_type = "#bf{ #font[61]{CMS} #font[52]{Preliminary} } "
