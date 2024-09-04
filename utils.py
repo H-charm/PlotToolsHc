@@ -7,56 +7,56 @@ import array
 import os
 
 
-sample_cuts_dict = {
-    "tt_bb": "(genEventClassifier==9)",
-    "tt_bj": "(genEventClassifier==7 || genEventClassifier==8)",
-    "tt_bb_4fs": "(genEventClassifier==9)",
-    "tt_bj_4fs": "(genEventClassifier==7 || genEventClassifier==8)",
-    "tt_bb_5fs": "(genEventClassifier==9)",
-    "tt_bj_5fs": "(genEventClassifier==7 || genEventClassifier==8)",
-    "tt_cc": "(genEventClassifier==6)",
-    "tt_cj": "(genEventClassifier==4 || genEventClassifier==5)",        
-    "tt_lf": "(tt_category==0 && higgs_decay==0)",
-    "ttZqq": "(z_decay!=5) && (z_decay!=4)",
-    "ttZcc": "(z_decay==4)",
-    "ttZbb": "(z_decay==5)",
-    "ttH_hww": "(higgs_decay==24)",
-    "": "1"
-}
+# sample_cuts_dict = {
+#     "tt_bb": "(genEventClassifier==9)",
+#     "tt_bj": "(genEventClassifier==7 || genEventClassifier==8)",
+#     "tt_bb_4fs": "(genEventClassifier==9)",
+#     "tt_bj_4fs": "(genEventClassifier==7 || genEventClassifier==8)",
+#     "tt_bb_5fs": "(genEventClassifier==9)",
+#     "tt_bj_5fs": "(genEventClassifier==7 || genEventClassifier==8)",
+#     "tt_cc": "(genEventClassifier==6)",
+#     "tt_cj": "(genEventClassifier==4 || genEventClassifier==5)",        
+#     "tt_lf": "(tt_category==0 && higgs_decay==0)",
+#     "ttZqq": "(z_decay!=5) && (z_decay!=4)",
+#     "ttZcc": "(z_decay==4)",
+#     "ttZbb": "(z_decay==5)",
+#     "ttH_hww": "(higgs_decay==24)",
+#     "": "1"
+# }
 
-trg_dict = {
-    "e": "(abs(lep1_pdgId)==11 && passTrigEl && !(lep1_phi>-1.57 && lep1_phi<-0.87 && lep1_eta<-1.3))", ## last part is to fix 2018 issue in hadron calo
-    "m": "(abs(lep1_pdgId)==13 && passTrigMu)",
-    "ee": "(abs(lep1_pdgId)==11 && abs(lep2_pdgId)==11 && (passTrigElEl || passTrig2L_extEl))",
-    "mm": "(abs(lep1_pdgId)==13 && abs(lep2_pdgId)==13 && (passTrigMuMu || passTrig2L_extMu))",
-    "em": "(abs(lep1_pdgId)!=abs(lep2_pdgId) && (passTrigElMu || passTrig2L_extEl || passTrig2L_extMu))",
-    "FH": "(passTrig0L || passTrig0L_ext)",
-    "DL": "((abs(lep1_pdgId)==11 && abs(lep2_pdgId)==11 && (passTrigElEl || passTrig2L_extEl)) || (abs(lep1_pdgId)==13 && abs(lep2_pdgId)==13 && (passTrigMuMu || passTrig2L_extMu)) || (abs(lep1_pdgId)!=abs(lep2_pdgId) && (passTrigElMu || passTrig2L_extEl || passTrig2L_extMu)))",
-    "None": "1"
-}
+# trg_dict = {
+#     "e": "(abs(lep1_pdgId)==11 && passTrigEl && !(lep1_phi>-1.57 && lep1_phi<-0.87 && lep1_eta<-1.3))", ## last part is to fix 2018 issue in hadron calo
+#     "m": "(abs(lep1_pdgId)==13 && passTrigMu)",
+#     "ee": "(abs(lep1_pdgId)==11 && abs(lep2_pdgId)==11 && (passTrigElEl || passTrig2L_extEl))",
+#     "mm": "(abs(lep1_pdgId)==13 && abs(lep2_pdgId)==13 && (passTrigMuMu || passTrig2L_extMu))",
+#     "em": "(abs(lep1_pdgId)!=abs(lep2_pdgId) && (passTrigElMu || passTrig2L_extEl || passTrig2L_extMu))",
+#     "FH": "(passTrig0L || passTrig0L_ext)",
+#     "DL": "((abs(lep1_pdgId)==11 && abs(lep2_pdgId)==11 && (passTrigElEl || passTrig2L_extEl)) || (abs(lep1_pdgId)==13 && abs(lep2_pdgId)==13 && (passTrigMuMu || passTrig2L_extMu)) || (abs(lep1_pdgId)!=abs(lep2_pdgId) && (passTrigElMu || passTrig2L_extEl || passTrig2L_extMu)))",
+#     "None": "1"
+# }
 
-syst_weights_dict = {
-    "CMS_LHE_weights_scale_muF_Up": "LHEScaleWeight[5]*LHEScaleWeightNorm[5]",
-    "CMS_LHE_weights_scale_muF_Down": "LHEScaleWeight[3]*LHEScaleWeightNorm[3]",
-    "CMS_LHE_weights_scale_muR_Up": "LHEScaleWeight[7]*LHEScaleWeightNorm[7]",
-    "CMS_LHE_weights_scale_muR_Down": "LHEScaleWeight[1]*LHEScaleWeightNorm[1]",
-    "CMS_PS_isr_Up": "PSWeight[2]*PSWeightNorm[2]",
-    "CMS_PS_isr_Down": "PSWeight[0]*PSWeightNorm[0]",
-    "CMS_PS_fsr_Up": "PSWeight[3]*PSWeightNorm[3]",
-    "CMS_PS_fsr_Down": "PSWeight[1]*PSWeightNorm[1]",
-}
+# syst_weights_dict = {
+#     "CMS_LHE_weights_scale_muF_Up": "LHEScaleWeight[5]*LHEScaleWeightNorm[5]",
+#     "CMS_LHE_weights_scale_muF_Down": "LHEScaleWeight[3]*LHEScaleWeightNorm[3]",
+#     "CMS_LHE_weights_scale_muR_Up": "LHEScaleWeight[7]*LHEScaleWeightNorm[7]",
+#     "CMS_LHE_weights_scale_muR_Down": "LHEScaleWeight[1]*LHEScaleWeightNorm[1]",
+#     "CMS_PS_isr_Up": "PSWeight[2]*PSWeightNorm[2]",
+#     "CMS_PS_isr_Down": "PSWeight[0]*PSWeightNorm[0]",
+#     "CMS_PS_fsr_Up": "PSWeight[3]*PSWeightNorm[3]",
+#     "CMS_PS_fsr_Down": "PSWeight[1]*PSWeightNorm[1]",
+# }
 
-category_cuts_dict = {
-    "catHcc": "nnCategory10(score_ttHcc, score_ttHbb, score_ttZqq, score_ttZcc, score_ttZbb, score_ttLF, score_ttcj, score_ttcc, score_ttbj, score_ttbb)==0",
-    "catHbb": "nnCategory10(score_ttHcc, score_ttHbb, score_ttZqq, score_ttZcc, score_ttZbb, score_ttLF, score_ttcj, score_ttcc, score_ttbj, score_ttbb)==1",
-    "catZcc": "nnCategory10(score_ttHcc, score_ttHbb, score_ttZqq, score_ttZcc, score_ttZbb, score_ttLF, score_ttcj, score_ttcc, score_ttbj, score_ttbb)==2",
-    "catZbb": "nnCategory10(score_ttHcc, score_ttHbb, score_ttZqq, score_ttZcc, score_ttZbb, score_ttLF, score_ttcj, score_ttcc, score_ttbj, score_ttbb)==3",
-    "catLF": "nnCategory10(score_ttHcc, score_ttHbb, score_ttZqq, score_ttZcc, score_ttZbb, score_ttLF, score_ttcj, score_ttcc, score_ttbj, score_ttbb)==4",
-    "catCJ": "nnCategory10(score_ttHcc, score_ttHbb, score_ttZqq, score_ttZcc, score_ttZbb, score_ttLF, score_ttcj, score_ttcc, score_ttbj, score_ttbb)==5",
-    "catCC": "nnCategory10(score_ttHcc, score_ttHbb, score_ttZqq, score_ttZcc, score_ttZbb, score_ttLF, score_ttcj, score_ttcc, score_ttbj, score_ttbb)==6",
-    "catBJ": "nnCategory10(score_ttHcc, score_ttHbb, score_ttZqq, score_ttZcc, score_ttZbb, score_ttLF, score_ttcj, score_ttcc, score_ttbj, score_ttbb)==7",
-    "catBB": "nnCategory10(score_ttHcc, score_ttHbb, score_ttZqq, score_ttZcc, score_ttZbb, score_ttLF, score_ttcj, score_ttcc, score_ttbj, score_ttbb)==8",   
-}
+# category_cuts_dict = {
+#     "catHcc": "nnCategory10(score_ttHcc, score_ttHbb, score_ttZqq, score_ttZcc, score_ttZbb, score_ttLF, score_ttcj, score_ttcc, score_ttbj, score_ttbb)==0",
+#     "catHbb": "nnCategory10(score_ttHcc, score_ttHbb, score_ttZqq, score_ttZcc, score_ttZbb, score_ttLF, score_ttcj, score_ttcc, score_ttbj, score_ttbb)==1",
+#     "catZcc": "nnCategory10(score_ttHcc, score_ttHbb, score_ttZqq, score_ttZcc, score_ttZbb, score_ttLF, score_ttcj, score_ttcc, score_ttbj, score_ttbb)==2",
+#     "catZbb": "nnCategory10(score_ttHcc, score_ttHbb, score_ttZqq, score_ttZcc, score_ttZbb, score_ttLF, score_ttcj, score_ttcc, score_ttbj, score_ttbb)==3",
+#     "catLF": "nnCategory10(score_ttHcc, score_ttHbb, score_ttZqq, score_ttZcc, score_ttZbb, score_ttLF, score_ttcj, score_ttcc, score_ttbj, score_ttbb)==4",
+#     "catCJ": "nnCategory10(score_ttHcc, score_ttHbb, score_ttZqq, score_ttZcc, score_ttZbb, score_ttLF, score_ttcj, score_ttcc, score_ttbj, score_ttbb)==5",
+#     "catCC": "nnCategory10(score_ttHcc, score_ttHbb, score_ttZqq, score_ttZcc, score_ttZbb, score_ttLF, score_ttcj, score_ttcc, score_ttbj, score_ttbb)==6",
+#     "catBJ": "nnCategory10(score_ttHcc, score_ttHbb, score_ttZqq, score_ttZcc, score_ttZbb, score_ttLF, score_ttcj, score_ttcc, score_ttbj, score_ttbb)==7",
+#     "catBB": "nnCategory10(score_ttHcc, score_ttHbb, score_ttZqq, score_ttZcc, score_ttZbb, score_ttLF, score_ttcj, score_ttcc, score_ttbj, score_ttbb)==8",   
+# }
 
 def add_overflow(h):
     nbins = h.GetNbinsX()+1
