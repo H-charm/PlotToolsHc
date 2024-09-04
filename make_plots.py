@@ -21,16 +21,16 @@ def draw_mc_only():
         os.makedirs(output_dir)
 
     ## Add MC samples using new ROOT trees
-    config_file.add_sample(name="DYJets", root_file="DYJets_tree.root", cuts=utils.sample_cuts_dict[""])
-    config_file.add_sample(name="VBF", root_file="VBF_tree.root", cuts=utils.sample_cuts_dict[""])
-    config_file.add_sample(name="WminusH", root_file="WminusH_tree.root", cuts=utils.sample_cuts_dict[""])
-    config_file.add_sample(name="WplusH", root_file="WplusH_tree.root", cuts=utils.sample_cuts_dict[""])
-    config_file.add_sample(name="ZH", root_file="ZH_tree.root", cuts=utils.sample_cuts_dict[""])
-    config_file.add_sample(name="ZZ", root_file="ZZ_tree.root", cuts=utils.sample_cuts_dict[""])
-    config_file.add_sample(name="bbH", root_file="bbH_tree.root", cuts=utils.sample_cuts_dict[""])
-    config_file.add_sample(name="ggH", root_file="ggH_tree.root", cuts=utils.sample_cuts_dict[""])
-    config_file.add_sample(name="tqH", root_file="tqH_tree.root", cuts=utils.sample_cuts_dict[""])
-    config_file.add_sample(name="ttH", root_file="ttH_tree.root", cuts=utils.sample_cuts_dict[""])
+    config_file.add_sample(name="DYJets", root_file="DYJets_tree.root",cuts=[])
+    config_file.add_sample(name="VBF", root_file="VBF_tree.root",cuts=[])
+    config_file.add_sample(name="WminusH", root_file="WminusH_tree.root",cuts=[])
+    config_file.add_sample(name="WplusH", root_file="WplusH_tree.root",cuts=[])
+    config_file.add_sample(name="ZH", root_file="ZH_tree.root",cuts=[])
+    config_file.add_sample(name="bbH", root_file="bbH_tree.root",cuts=[])
+    config_file.add_sample(name="ggH", root_file="ggH_tree.root",cuts=[])
+    config_file.add_sample(name="tqH", root_file="tqH_tree.root",cuts=[])
+    config_file.add_sample(name="ttH", root_file="ttH_tree.root",cuts=[])
+
 
     samples = config_file.get_samples_list()
     config_file.print_samples_info()
