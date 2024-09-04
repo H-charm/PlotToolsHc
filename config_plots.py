@@ -3,8 +3,7 @@ import ROOT
 class Config:
   
   def __init__(self):  
-    
-    ## branches to plot using --mcdata argument
+
     ## [name, plot name, x-axis label, nbins, xlow, xhigh]
     self.mcdata_branches = [
     # Lepton 1 branches
@@ -62,8 +61,8 @@ class Config:
     
     
     self.output_plots_dir = "plots/"
-    self.channels = [] ## options: mm, ee, em, e, m, FH
-    self.base_dir = "/eos/user/p/pkatris/Giannis_trees/"
+    self.channels = [] 
+    self.base_dir = ##your tree directory
     self.plot_format = "png"
     self.dataset_legend = "59.8 fb^{-1} (13 TeV)"
     self.plot_type = "#bf{ #font[61]{CMS} #font[52]{Preliminary} } "
