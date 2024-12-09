@@ -1,10 +1,10 @@
 Plotting scripts for H+c analysis.  
-Input trees are produced using [NanoHc](https://github.com/yiannispar/NanoHc) framework.  
+Input trees are produced using [NanoHc](https://github.com/H-charm/NanoHc.git) framework.  
 
 Checkout  
 ---------------    
 ```bash  
-git clone git@github.com:yiannispar/PlotToolsHc.git    
+git clone https://github.com/H-charm/PlotToolsHc.git    
 ```  
 
 Run  
