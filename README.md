@@ -1,9 +1,20 @@
-# PlotToolsHc
-```bash
-export SCRAM_ARCH=slc7_amd64_gcc900
-cmsrel CMSSW_11_3_4
-cd CMSSW_11_3_4/src
+Plotting scripts for H+c analysis.  
+Input trees are produced using [NanoHc](https://github.com/yiannispar/NanoHc) framework.  
 
-git clone git@github.com:pkatris/PlotToolsHc.git
-python3 make_plots.py (--mconly)
+Checkout  
+---------------    
+```bash  
+git clone git@github.com:yiannispar/PlotToolsHc.git    
+```  
+
+Run  
+-----------  
+```bash  
+python3 makePlots (--type ["shape","stack"])  
 ```
+
+Notes  
+-----  
+- You can change settings in config.py  
+- You can add/remove samples in makePlots.py  
+- If you want to plot branches not already present in the trees (eg DeltaR) you can calculate this by implementing C++ functions (cpp_functions.C)  
