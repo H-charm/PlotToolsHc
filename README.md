@@ -10,7 +10,7 @@ git clone https://github.com/H-charm/PlotToolsHc.git
 Run  
 -----------  
 ```bash  
-python3 makePlots (--type ["shape","stack"])  
+python3 makePlots.py (--type ["shape","stack"])  
 ```
 
 Notes  
