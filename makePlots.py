@@ -90,7 +90,7 @@ if __name__ == "__main__":
     config_file.add_sample(name="VBF", root_file="VBF_tree.root",cuts=1)
     config_file.add_sample(name="bbH", root_file="bbH_tree.root",cuts=1)
     config_file.add_sample(name="Hc", root_file="Hc_tree.root",cuts=1)
-    config_file.add_sample(name="tqH", root_file="tqH_tree.root",cuts=1)
+    #config_file.add_sample(name="tqH", root_file="tqH_tree.root",cuts=1)
     config_file.add_sample(name="ttH", root_file="ttH_tree.root",cuts=1)
     config_file.add_sample(name="VH", root_file="VH_tree.root",cuts=1)
     config_file.add_sample(name="ZZ", root_file="ZZ_tree.root",cuts=1)
