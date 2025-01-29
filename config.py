@@ -49,9 +49,10 @@ class Config:
       # ["deltaR(lep3_eta, lep4_eta, lep3_phi, lep4_phi)","dR_lep3_lep_4","#DeltaR(lep3,lep4)", 60, 0, 6],
       ]
     
-    self.output_plots_dir = "plots/2021/"
-    self.base_dir = "/eos/user/n/nplastir/H+c/trees/mc/2021/merged"
+    self.output_plots_dir = "plots/weighted/all/mc/2022EE/"
+    self.base_dir = "/eos/user/n/nplastir/trees_data/mc/2022EE/merged"
     self.cuts = "1" # if you don't want cuts remember to put "1"
+    self.weights = "genWeight * xsecWeight" #"genWeight * xsecWeight * puWeight * muEffWeight * elEffWeight * electronScale * muonScale * LHEScaleWeightNorm * LHEPdfWeightNorm * PSWeightNorm"
     self.plot_format = "png"
     self.dataset_legend = "" #"38.01"
     self.stack_ymin = 1

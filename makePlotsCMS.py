@@ -13,13 +13,37 @@ ROOT.gROOT.SetBatch(True)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-t', '--type', type=str, help='Type of plots', choices=['stack', 'shape'], default='stack')
+parser.add_argument('-d', '--data', type=str, help='Real data filename (optional)', default=None)
 args = parser.parse_args()
+
+DATA_FILES = [
+    "DoubleMuon_tree.root",
+    "EGamma_tree.root",
+    "MuonEG_tree.root",
+    "Muon_tree.root",
+    "SingleMuon_tree.root"
+]
 
 def create_RDF(filename):
     print(f"Creating RDF for sample {filename}")
     filename_path = os.path.join(config_file.base_dir, filename)
     df = ROOT.RDataFrame("Events", filename_path)
+
+    # Apply MC weights
+    df = df.Define("final_weight", config_file.weights)
     return df
+
+def merge_data_RDF():
+    """Create a single RDataFrame from multiple ROOT data files."""
+    file_paths = [os.path.join(args.data, f) for f in DATA_FILES]
+    return ROOT.RDataFrame("Events", file_paths)
+    # """Merge all data ROOT files into a single RDataFrame."""
+    # rdf_list = []
+    # for f in DATA_FILES:
+    #     filename_path = os.path.join(args.data, f)
+    #     df = ROOT.RDataFrame("Events", filename_path)
+    #     rdf_list.append(df)
+    # return ROOT.RDataFrame.Merge(rdf_list)
 
 def create_plots(config_file):
     samples_dict = config_file.samples_dict
@@ -27,6 +51,13 @@ def create_plots(config_file):
 
     samples_filenames = config_file.get_samples_filenames()
     RDF_dict = {filename: create_RDF(filename) for filename in samples_filenames}
+
+    # Load real data if provided
+    data_histos = None  # Default: no data
+    if args.data:
+        print("Loading and merging real data...")
+        data_df = merge_data_RDF()
+        data_histos = {}
 
     # CMS Styling Settings
     CMS.SetExtraText("Preliminary")
@@ -41,7 +72,7 @@ def create_plots(config_file):
         for sample in samples_dict.keys():
             df = RDF_dict[samples_dict[sample][0]]
             hist = df.Filter(config_file.cuts).Define("plotvar_", variable[0]).Histo1D(
-                (f"hist_{sample}_{variable[0]}", "", variable[3], variable[4], variable[5]), "plotvar_"
+                (f"hist_{sample}_{variable[0]}", "", variable[3], variable[4], variable[5]), "plotvar_", "final_weight"
             )
             hist = utils.add_underflow(hist)
             hist = utils.add_overflow(hist)
@@ -51,6 +82,17 @@ def create_plots(config_file):
                 # hist.SetLineColor(config_file.colors[sample])
                 hist.Scale(1 / hist.Integral())
             histos_dict[sample] = hist.GetPtr()
+
+        # Process real data histogram
+        if args.data:
+            data_hist = data_df.Filter(config_file.cuts).Define("plotvar_", variable[0]).Histo1D(
+                (f"hist_data_{variable[0]}", "", variable[3], variable[4], variable[5]), "plotvar_"
+            )
+            data_hist = utils.add_underflow(data_hist)
+            data_hist = utils.add_overflow(data_hist)
+            data_hist.SetMarkerStyle(20)  # Marker style for data points
+            data_hist.SetMarkerColor(ROOT.kBlack)
+            data_histos[variable[0]] = data_hist.GetPtr()
 
         # CMSStyle Canvas and Legend
         canv_name = f"{variable[1]}_canvas"
@@ -85,7 +127,7 @@ def create_plots(config_file):
         # Shift multiplier position
         ROOT.TGaxis.SetExponentOffset(-0.10, 0.01, "Y")
 
-        CMS.cmsDrawStack(stack, legend, histos_dict)
+        CMS.cmsDrawStack(stack, legend, histos_dict, data=(data_histos[variable[0]] if args.data else None))
 
         # Save the canvas
         canvas.SaveAs(os.path.join(config_file.output_plots_dir, args.type, f"{variable[1]}." + config_file.plot_format))
