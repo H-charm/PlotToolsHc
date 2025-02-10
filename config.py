@@ -23,24 +23,28 @@ class Config:
       
     ## [branch name, plot name, x-axis label, nbins, xlow, xhigh]
     self.vars = [
-      [self.el_prefix + "pt","el_pt","Electron p_{T} [GeV]", 100, 0, 200],
-      [self.mu_prefix + "pt","mu_pt","Muon p_{T} [GeV]", 100, 0, 200],
-      [self.Z_prefix + "mass","Zcandidate_mass","Z candidate mass [GeV]", 100, 0, 150],
-      [self.Z_prefix + "pt","Zcandidate_pt","Z candidate p_{T} [GeV]", 100, 0, 200],
-      [self.Z_prefix + "eta","Zcandidate_eta","Z candidate #eta", 40, -8, 8],
-      [self.Z_prefix + "phi","Zcandidate_phi","Z candidate #phi [rad]", 40, -4, 4],
-      [self.Z_prefix + "onshell_mass","Zcandidate_onshell_mass","on-shell Z candidate mass [GeV]", 100, 0, 120],
-      [self.Z_prefix + "offshell_mass","Zcandidate_offshell_mass","off-shell Z candidate mass [GeV]", 60, 0, 120],
-      [self.H_prefix + "mass","Hcandidate_mass","H candidate mass [GeV]", 100, 0, 150],
+      # [self.el_prefix + "pt","el_pt","Electron p_{T} [GeV]", 100, 0, 200],
+      # [self.mu_prefix + "pt","mu_pt","Muon p_{T} [GeV]", 100, 0, 200],
+      # [self.Z_prefix + "mass","Zcandidate_mass","Z candidate mass [GeV]", 100, 0, 150],
+      # [self.Z_prefix + "pt","Zcandidate_pt","Z candidate p_{T} [GeV]", 100, 0, 200],
+      # [self.Z_prefix + "eta","Zcandidate_eta","Z candidate #eta", 40, -8, 8],
+      # [self.Z_prefix + "phi","Zcandidate_phi","Z candidate #phi [rad]", 40, -4, 4],
+      # [self.Z_prefix + "onshell_mass","Zcandidate_onshell_mass","on-shell Z candidate mass [GeV]", 100, 0, 120],
+      # [self.Z_prefix + "offshell_mass","Zcandidate_offshell_mass","off-shell Z candidate mass [GeV]", 60, 0, 120],
+      [self.H_prefix + "mass","Hcandidate_mass","H candidate mass [GeV]", 56, 70, 350],
       [self.H_prefix + "pt","Hcandidate_pt","H candidate p_{T} [GeV]", 100, 0, 200],
       [self.H_prefix + "eta","Hcandidate_eta","H candidate #eta", 40, -8, 8],
       [self.H_prefix + "phi","Hcandidate_phi","H candidate #phi [rad]", 40, -4, 4],
-      [self.jet_prefix + "mass[0]","ak4_mass_0","leading jet mass [GeV]", 100, 0, 200],
-      [self.jet_prefix + "pt[0]","ak4_pt_0","leading jet p_{T} [GeV]", 100, 0, 200],
-      [self.jet_prefix + "eta[0]","ak4_eta_0","leading jet #eta", 80, -8, 8],
-      [self.jet_prefix + "cvbdisc[0]","ak4_cvbdisc_0","leading jet c vs b score", 50, 0, 1],
-      [self.jet_prefix + "cvldisc[0]","ak4_cvldisc_0","leading jet c v l score", 50, 0, 1],      
-      [self.jet_prefix + "bdisc[0]","ak4_bdisc_0","leading jet b score", 50, 0, 1],
+      [self.ZZ_prefix + "mass","ZZcandidate_mass","H candidate mass [GeV]", 56, 70, 350],
+      [self.ZZ_prefix + "pt","ZZcandidate_pt","H candidate p_{T} [GeV]", 100, 0, 200],
+      [self.ZZ_prefix + "eta","ZZcandidate_eta","H candidate #eta", 40, -8, 8],
+      [self.ZZ_prefix + "phi","ZZcandidate_phi","H candidate #phi [rad]", 40, -4, 4],
+      # [self.jet_prefix + "mass[0]","ak4_mass_0","leading jet mass [GeV]", 100, 0, 200],
+      # [self.jet_prefix + "pt[0]","ak4_pt_0","leading jet p_{T} [GeV]", 100, 0, 200],
+      # [self.jet_prefix + "eta[0]","ak4_eta_0","leading jet #eta", 80, -8, 8],
+      # [self.jet_prefix + "cvbdisc[0]","ak4_cvbdisc_0","leading jet c vs b score", 50, 0, 1],
+      # [self.jet_prefix + "cvldisc[0]","ak4_cvldisc_0","leading jet c v l score", 50, 0, 1],      
+      # [self.jet_prefix + "bdisc[0]","ak4_bdisc_0","leading jet b score", 50, 0, 1],
       # ["deltaR(lep1_eta, lep2_eta, lep1_phi, lep2_phi)","dR_lep1_lep_2","#DeltaR(lep1,lep2)", 60, 0, 6],
       # ["deltaR(lep1_eta, lep3_eta, lep1_phi, lep3_phi)","dR_lep1_lep_3","#DeltaR(lep1,lep3)", 60, 0, 6],
       # ["deltaR(lep1_eta, lep4_eta, lep1_phi, lep4_phi)","dR_lep1_lep_4","#DeltaR(lep1,lep4)", 60, 0, 6],
@@ -49,10 +53,10 @@ class Config:
       # ["deltaR(lep3_eta, lep4_eta, lep3_phi, lep4_phi)","dR_lep3_lep_4","#DeltaR(lep3,lep4)", 60, 0, 6],
       ]
     
-    self.output_plots_dir = "plots/weighted/all/mc/2022EE/"
-    self.base_dir = "/eos/user/n/nplastir/trees_data/mc/2022EE/merged"
+    self.output_plots_dir = "plots/trees_06_02/2022"
+    self.base_dir = "/eos/user/n/nplastir/H+c/trees_06_02/mc/2022/merged"
     self.cuts = "1" # if you don't want cuts remember to put "1"
-    self.weights = "genWeight * xsecWeight" #"genWeight * xsecWeight * puWeight * muEffWeight * elEffWeight * electronScale * muonScale * LHEScaleWeightNorm * LHEPdfWeightNorm * PSWeightNorm"
+    self.weights = "genWeight * xsecWeight * puWeight * muEffWeight " #"LHEScaleWeightNorm * LHEPdfWeightNorm * PSWeightNorm"
     self.plot_format = "png"
     self.dataset_legend = "" #"38.01"
     self.stack_ymin = 1

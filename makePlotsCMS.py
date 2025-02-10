@@ -17,6 +17,7 @@ parser.add_argument('-d', '--data', type=str, help='Real data filename (optional
 args = parser.parse_args()
 
 DATA_FILES = [
+    # "merged_data.root"
     "DoubleMuon_tree.root",
     "EGamma_tree.root",
     "MuonEG_tree.root",
@@ -139,13 +140,7 @@ if __name__ == "__main__":
     os.makedirs(os.path.join(config_file.output_plots_dir, args.type), exist_ok=True)
 
     # Samples will be stacked in this order
-    config_file.add_sample(name="ggH", root_file="ggH_tree.root",cuts=1)
-    config_file.add_sample(name="VBF", root_file="VBF_tree.root",cuts=1)
-    config_file.add_sample(name="WplusH", root_file="WplusH_tree.root",cuts=1)
-    config_file.add_sample(name="WminusH", root_file="WminusH_tree.root",cuts=1)
-    config_file.add_sample(name="ZH", root_file="ZH_tree.root",cuts=1)
-    config_file.add_sample(name="ttH", root_file="ttH_tree.root",cuts=1)
-    config_file.add_sample(name="bbH", root_file="bbH_tree.root",cuts=1)
+    
     config_file.add_sample(name="ZZ", root_file="ZZ_tree.root",cuts=1)
     config_file.add_sample(name="WWZ", root_file="WWZ_tree.root",cuts=1)
     config_file.add_sample(name="WZZ", root_file="WZZ_tree.root",cuts=1)
@@ -155,6 +150,13 @@ if __name__ == "__main__":
     config_file.add_sample(name="WZ", root_file="WZ_tree.root",cuts=1)
     config_file.add_sample(name="DYJets", root_file="DYJets_tree.root",cuts=1)
     config_file.add_sample(name="TTto2L2Nu", root_file="TTto2L2Nu_tree.root",cuts=1)
+    config_file.add_sample(name="ggH", root_file="ggH_tree.root",cuts=1)
+    config_file.add_sample(name="VBF", root_file="VBF_tree.root",cuts=1)
+    config_file.add_sample(name="WplusH", root_file="WplusH_tree.root",cuts=1)
+    config_file.add_sample(name="WminusH", root_file="WminusH_tree.root",cuts=1)
+    config_file.add_sample(name="ZH", root_file="ZH_tree.root",cuts=1)
+    config_file.add_sample(name="ttH", root_file="ttH_tree.root",cuts=1)
+    config_file.add_sample(name="bbH", root_file="bbH_tree.root",cuts=1)
     # config_file.add_sample(name="Hc", root_file="Hc_tree.root",cuts=1)
  
 
