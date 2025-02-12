@@ -32,13 +32,19 @@ class Config:
       # [self.Z_prefix + "onshell_mass","Zcandidate_onshell_mass","on-shell Z candidate mass [GeV]", 100, 0, 120],
       # [self.Z_prefix + "offshell_mass","Zcandidate_offshell_mass","off-shell Z candidate mass [GeV]", 60, 0, 120],
       [self.H_prefix + "mass","Hcandidate_mass","H candidate mass [GeV]", 56, 70, 350],
-      [self.H_prefix + "pt","Hcandidate_pt","H candidate p_{T} [GeV]", 100, 0, 200],
-      [self.H_prefix + "eta","Hcandidate_eta","H candidate #eta", 40, -8, 8],
-      [self.H_prefix + "phi","Hcandidate_phi","H candidate #phi [rad]", 40, -4, 4],
-      [self.ZZ_prefix + "mass","ZZcandidate_mass","H candidate mass [GeV]", 56, 70, 350],
-      [self.ZZ_prefix + "pt","ZZcandidate_pt","H candidate p_{T} [GeV]", 100, 0, 200],
-      [self.ZZ_prefix + "eta","ZZcandidate_eta","H candidate #eta", 40, -8, 8],
-      [self.ZZ_prefix + "phi","ZZcandidate_phi","H candidate #phi [rad]", 40, -4, 4],
+      [self.H_prefix + "mass_4mu","Hcandidate_mass_4mu","4#mu mass [GeV]", 56, 70, 350],
+      [self.H_prefix + "mass_4e","Hcandidate_mass_4e","4e mass [GeV]", 56, 70, 350],
+      [self.H_prefix + "mass_2e2mu","Hcandidate_mass_2e2mu","2e2#mu mass [GeV]", 56, 70, 350],
+      # [self.H_prefix + "pt","Hcandidate_pt","H candidate p_{T} [GeV]", 100, 0, 200],
+      # [self.H_prefix + "eta","Hcandidate_eta","H candidate #eta", 40, -8, 8],
+      # [self.H_prefix + "phi","Hcandidate_phi","H candidate #phi [rad]", 40, -4, 4],
+      [self.ZZ_prefix + "mass","ZZcandidate_mass","ZZ candidate mass [GeV]", 56, 70, 350],
+      [self.ZZ_prefix + "mass_4mu","ZZcandidate_mass_4mu","4#mu mass [GeV]", 56, 70, 350],
+      [self.ZZ_prefix + "mass_4e","ZZcandidate_mass_4e","4e mass [GeV]", 56, 70, 350],
+      [self.ZZ_prefix + "mass_2e2mu","ZZcandidate_mass_2e2mu","2e2#mu mass [GeV]", 56, 70, 350],
+      # [self.ZZ_prefix + "pt","ZZcandidate_pt","ZZ candidate p_{T} [GeV]", 100, 0, 200],
+      # [self.ZZ_prefix + "eta","ZZcandidate_eta","ZZ candidate #eta", 40, -8, 8],
+      # [self.ZZ_prefix + "phi","ZZcandidate_phi","ZZ candidate #phi [rad]", 40, -4, 4],
       # [self.jet_prefix + "mass[0]","ak4_mass_0","leading jet mass [GeV]", 100, 0, 200],
       # [self.jet_prefix + "pt[0]","ak4_pt_0","leading jet p_{T} [GeV]", 100, 0, 200],
       # [self.jet_prefix + "eta[0]","ak4_eta_0","leading jet #eta", 80, -8, 8],
@@ -53,12 +59,12 @@ class Config:
       # ["deltaR(lep3_eta, lep4_eta, lep3_phi, lep4_phi)","dR_lep3_lep_4","#DeltaR(lep3,lep4)", 60, 0, 6],
       ]
     
-    self.output_plots_dir = "plots/trees_06_02/2022"
-    self.base_dir = "/eos/user/n/nplastir/H+c/trees_06_02/mc/2022/merged"
+    self.output_plots_dir = "plots/trees_11_02_lepflav/weighted_test_wpu/2022"
+    self.base_dir = "/eos/user/n/nplastir/H+c/trees_11_02_lepflav/mc/2022/merged"
     self.cuts = "1" # if you don't want cuts remember to put "1"
-    self.weights = "genWeight * xsecWeight * puWeight * muEffWeight " #"LHEScaleWeightNorm * LHEPdfWeightNorm * PSWeightNorm"
+    self.weights =  "genWeight * 7.98 * 1000 " #"genWeight * xsecWeight * puWeight" #"LHEScaleWeightNorm * LHEPdfWeightNorm * PSWeightNorm"
     self.plot_format = "png"
-    self.dataset_legend = "" #"38.01"
+    self.dataset_legend = "9.6" #"34.7"
     self.stack_ymin = 1
     self.stack_ymax = 5e6
     self.set_logy = False 
@@ -73,15 +79,16 @@ class Config:
       "ZH":"ZH",
       "ttH":"ttH",
       "bbH":"bbH",
-      "ZZ": "ZZ",
-      "WWZ": "WWZ",
-      "WZZ": "WZZ",
-      "ZZZ": "ZZZ",
-      "TTWW": "TTWW",
-      "TTZZ": "TTZZ",
-      "WZ": "WZ",
-      "DYJets":"DYJets",
-      "TTto2L2Nu":"TTto2L2Nu",
+      "qqZZ": "qqZZ",
+      "ggZZ": "ggZZ",
+      # "WWZ": "WWZ",
+      # "WZZ": "WZZ",
+      # "ZZZ": "ZZZ",
+      # "TTWW": "TTWW",
+      # "TTZZ": "TTZZ",
+      # "WZ": "WZ",
+      # "DYJets":"DYJets",
+      # "TTto2L2Nu":"TTto2L2Nu",
       # "Hc":"Hc",
     }
     
