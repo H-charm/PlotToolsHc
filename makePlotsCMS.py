@@ -10,32 +10,6 @@ ROOT.ROOT.EnableImplicitMT()  # Enable multi-threading for RDataFrame
 ROOT.gInterpreter.ProcessLine('#include "cpp_functions.C"')
 ROOT.gROOT.SetBatch(True)
 
-
-weights ={
-    "DYJets": "puWeight * genWeight * 9.6 * 1000 * 5558.0 * (1.0/27096229)",
-    "ggZZ_2E2Mu": "puWeight * genWeight * 9.6 * 1000 * 0.00624157 * (1.0/150000) ",
-    "ggZZ_2E2Tau": "puWeight * genWeight * 9.6 * 1000 *  0.00624157 * (1.0/144855)", 
-    "ggZZ_2Mu2Tau": "puWeight * genWeight * 9.6 * 1000 * 0.00624157  * (1.0/146285)",
-    "ggZZ_4E": "puWeight * genWeight * 9.6 * 1000 * 0.00305851 * (1.0/298185) ",
-    "ggZZ_4Mu": "puWeight * genWeight * 9.6 * 1000 * 0.00303575 * (1.0/296985)",
-    "ggZZ_4Tau": "puWeight * genWeight * 9.6 * 1000 * 0.00303575 * (1.0/298152)",
-    "qqZZ": "puWeight * genWeight * 9.6 * 1000 * 1.39 * (1.0 / 20341593)",
-    "ggH": "puWeight * genWeight * 9.6 * 1000 * 0.014337135 * (1.0 / 11272230)",
-    "VBF": "puWeight * genWeight * 9.6 * 1000 * 0.001119411 * 1.0/(410391)",
-    "WplusH": "puWeight * genWeight * 9.6 * 1000 * 0.00024400305 * 1.0/(454256)",
-    "WminusH": "puWeight * genWeight * 9.6 * 1000 * 0.00015583365 * 1.0/(285614)",
-    "ZH": "puWeight * genWeight * 9.6 * 1000 * 0.00077523450 * 1.0/(675815)",
-    "ttH": "puWeight * genWeight * 9.6 * 1000 * 0.0031184814 * 1.0/(56096)",
-    "bbH": "puWeight * genWeight * 9.6 * 1000 * 0.0001445517 * 1.0/(100000)",
-    "TTWW": "puWeight * genWeight * 9.6 * 1000 * 0.008203 * (1.0/448443)",
-    "TTZZ": "puWeight * genWeight * 9.6 * 1000 * 0.001579 * (1.0/443238)",
-    "TTto2L2Nu": "puWeight * genWeight * 9.6 * 1000 * 762.1 * (1.0/1912899360)",
-    "WWZ": "puWeight * genWeight * 9.6 * 1000 * 0.1851 * (1.0/361167)",
-    "WZZ": "puWeight * genWeight * 9.6 * 1000 * 0.0621 * (1.0/123328)",
-    "ZZZ": "puWeight * genWeight * 9.6 * 1000 * 0.0159 * (1.0/31382)",
-    "WZ": "puWeight * genWeight * 9.6 * 1000 * 4.924 * (1.0/13670481) "
-}
-
 parser = argparse.ArgumentParser()
 parser.add_argument('-t', '--type', type=str, help='Type of plots', choices=['stack', 'shape'], default='stack')
 parser.add_argument('-d', '--data', type=str, help='Real data filename (optional)', default=None)
@@ -43,46 +17,43 @@ args = parser.parse_args()
 
 DATA_FILES = [
     # "merged_data.root"
-    "DoubleMuon_tree.root",
-    "EGamma_tree.root",
-    "MuonEG_tree.root",
-    "Muon_tree.root",
-    "SingleMuon_tree.root"
-    # "merged_eraE.root",
-    # "merged_eraF.root",
-    # "merged_eraG.root"
+    # "DoubleMuon_merged.root",
+    "EGamma_merged.root",
+    "MuonEG_merged.root",
+    "Muon_merged.root"
+    # "SingleMuon_merged.root"
 ]
-
-# def create_RDF(filename):
-#     print(f"Creating RDF for sample {filename}")
-#     filename_path = os.path.join(config_file.base_dir, filename)
-#     df = ROOT.RDataFrame("Events", filename_path)
-
-#     # Apply MC weights
-#     df = df.Define("final_weight", config_file.weights)
-#     return df
 
 def create_RDF(filename):
     print(f"Creating RDF for sample {filename}")
     filename_path = os.path.join(config_file.base_dir, filename)
     df = ROOT.RDataFrame("Events", filename_path)
 
-    # Determine the sample name from the filename
-    sample_name = None
-    for key in weights.keys():
-        if key in filename:
-            sample_name = key
-            break
-
-    if sample_name is None:
-        print(f"Warning: No weight found for {filename}. Using default weight = 1.0")
-        weight_expr = "1.0"
-    else:
-        weight_expr = weights[sample_name]
-
-    # Apply the correct weight
-    df = df.Define("final_weight", weight_expr)
+    # Apply MC weights
+    df = df.Define("final_weight", config_file.weights)
     return df
+
+# def create_RDF(filename):
+#     print(f"Creating RDF for sample {filename}")
+#     filename_path = os.path.join(config_file.base_dir, filename)
+#     df = ROOT.RDataFrame("Events", filename_path)
+
+#     # Determine the sample name from the filename
+#     sample_name = None
+#     for key in weights_2022.keys():
+#         if key in filename:
+#             sample_name = key
+#             break
+
+#     if sample_name is None:
+#         print(f"Warning: No weight found for {filename}. Using default weight = 1.0")
+#         weight_expr = "1.0"
+#     else:
+#         weight_expr = weights_2022[sample_name]
+
+#     # Apply the correct weight
+#     df = df.Define("final_weight", weight_expr)
+#     return df
 
 
 def merge_data_RDF():
@@ -198,30 +169,56 @@ if __name__ == "__main__":
 
     # Samples will be stacked in this order
     
-    config_file.add_sample(name="ggZZ_2E2Mu", root_file="ggZZ_2E2Mu.root",cuts=1)
-    config_file.add_sample(name="ggZZ_2E2Tau", root_file="ggZZ_2E2Tau.root",cuts=1)
-    config_file.add_sample(name="ggZZ_2Mu2Tau", root_file="ggZZ_2Mu2Tau.root",cuts=1)
-    config_file.add_sample(name="ggZZ_4E", root_file="ggZZ_4E.root",cuts=1)
-    config_file.add_sample(name="ggZZ_4Mu", root_file="ggZZ_4Mu.root",cuts=1)
-    config_file.add_sample(name="ggZZ_4Tau", root_file="ggZZ_4Tau.root",cuts=1)
-    config_file.add_sample(name="qqZZ", root_file="qqZZ_tree.root",cuts=1)
-    config_file.add_sample(name="WWZ", root_file="WWZ_tree.root",cuts=1)
-    config_file.add_sample(name="WZZ", root_file="WZZ_tree.root",cuts=1)
-    config_file.add_sample(name="ZZZ", root_file="ZZZ_tree.root",cuts=1)
-    config_file.add_sample(name="TTWW", root_file="TTWW_tree.root",cuts=1)
-    config_file.add_sample(name="TTZZ", root_file="TTZZ_tree.root",cuts=1)
-    config_file.add_sample(name="WZ", root_file="WZ_tree.root",cuts=1)
-    # config_file.add_sample(name="DYJets", root_file="DYJets_tree.root",cuts=1)
-    # config_file.add_sample(name="TTto2L2Nu", root_file="TTto2L2Nu_tree.root",cuts=1)
-    config_file.add_sample(name="ggH", root_file="ggH_tree.root",cuts=1)
-    config_file.add_sample(name="VBF", root_file="VBF_tree.root",cuts=1)
-    config_file.add_sample(name="WplusH", root_file="WplusH_tree.root",cuts=1)
-    config_file.add_sample(name="WminusH", root_file="WminusH_tree.root",cuts=1)
-    config_file.add_sample(name="ZH", root_file="ZH_tree.root",cuts=1)
-    config_file.add_sample(name="ttH", root_file="ttH_tree.root",cuts=1)
-    config_file.add_sample(name="bbH", root_file="bbH_tree.root",cuts=1)
+    config_file.add_sample(name="ggZZ_2E2Mu", root_file="ggZZ_2E2Mu_final_merged.root",cuts=1)
+    config_file.add_sample(name="ggZZ_2E2Tau", root_file="ggZZ_2E2Tau_final_merged.root",cuts=1)
+    config_file.add_sample(name="ggZZ_2Mu2Tau", root_file="ggZZ_2Mu2Tau_final_merged.root",cuts=1)
+    config_file.add_sample(name="ggZZ_4E", root_file="ggZZ_4E_final_merged.root",cuts=1)
+    config_file.add_sample(name="ggZZ_4Mu", root_file="ggZZ_4Mu_final_merged.root",cuts=1)
+    config_file.add_sample(name="ggZZ_4Tau", root_file="ggZZ_4Tau_final_merged.root",cuts=1)
+    # config_file.add_sample(name="ggZZ", root_file="ggZZ_final_merged.root",cuts=1)
+    config_file.add_sample(name="qqZZ", root_file="qqZZ_final_merged.root",cuts=1)
+    config_file.add_sample(name="WWZ", root_file="WWZ_final_merged.root",cuts=1)
+    config_file.add_sample(name="WZZ", root_file="WZZ_final_merged.root",cuts=1)
+    config_file.add_sample(name="ZZZ", root_file="ZZZ_final_merged.root",cuts=1)
+    config_file.add_sample(name="TTWW", root_file="TTWW_final_merged.root",cuts=1)
+    config_file.add_sample(name="TTZZ", root_file="TTZZ_final_merged.root",cuts=1)
+    config_file.add_sample(name="WZ", root_file="WZ_final_merged.root",cuts=1)
+    # config_file.add_sample(name="DYJets", root_file="DYJets.root",cuts=1)
+    # config_file.add_sample(name="TTto2L2Nu", root_file="TTto2L2Nu.root",cuts=1)
+    config_file.add_sample(name="ggH", root_file="ggH_final_merged.root",cuts=1)
+    config_file.add_sample(name="VBF", root_file="VBF_final_merged.root",cuts=1)
+    config_file.add_sample(name="WplusH", root_file="WplusH_final_merged.root",cuts=1)
+    config_file.add_sample(name="WminusH", root_file="WminusH_final_merged.root",cuts=1)
+    # config_file.add_sample(name="ZH", root_file="ZH.root",cuts=1)
+    config_file.add_sample(name="ZH", root_file="ZH_final_merged.root",cuts=1)
+    config_file.add_sample(name="ttH", root_file="ttH_final_merged.root",cuts=1)
+    config_file.add_sample(name="bbH", root_file="bbH_final_merged.root",cuts=1)
     # config_file.add_sample(name="Hc", root_file="Hc_tree.root",cuts=1)
  
+
+    # config_file.add_sample(name="ggZZ_2E2Mu", root_file="ggZZ_2E2Mu_combined.root",cuts=1)
+    # config_file.add_sample(name="ggZZ_2E2Tau", root_file="ggZZ_2E2Tau_combined.root",cuts=1)
+    # config_file.add_sample(name="ggZZ_2Mu2Tau", root_file="ggZZ_2Mu2Tau_combined.root",cuts=1)
+    # config_file.add_sample(name="ggZZ_4E", root_file="ggZZ_4E_combined.root",cuts=1)
+    # config_file.add_sample(name="ggZZ_4Mu", root_file="ggZZ_4Mu_combined.root",cuts=1)
+    # config_file.add_sample(name="ggZZ_4Tau", root_file="ggZZ_4Tau_combined.root",cuts=1)
+    # config_file.add_sample(name="qqZZ", root_file="qqZZ_final_merged_combined.root",cuts=1)
+    # config_file.add_sample(name="WWZ", root_file="WWZ_final_merged_combined.root",cuts=1)
+    # config_file.add_sample(name="WZZ", root_file="WZZ_final_merged_combined.root",cuts=1)
+    # config_file.add_sample(name="ZZZ", root_file="ZZZ_final_merged_combined.root",cuts=1)
+    # config_file.add_sample(name="TTWW", root_file="TTWW_final_merged_combined.root",cuts=1)
+    # config_file.add_sample(name="TTZZ", root_file="TTZZ_final_merged_combined.root",cuts=1)
+    # config_file.add_sample(name="WZ", root_file="WZ_final_merged_combined.root",cuts=1)
+    # # config_file.add_sample(name="DYJets", root_file="DYJets.root",cuts=1)
+    # # config_file.add_sample(name="TTto2L2Nu", root_file="TTto2L2Nu.root",cuts=1)
+    # config_file.add_sample(name="ggH", root_file="ggH_final_merged_combined.root",cuts=1)
+    # config_file.add_sample(name="VBF", root_file="VBF_final_merged_combined.root",cuts=1)
+    # config_file.add_sample(name="WplusH", root_file="WplusH_final_merged_combined.root",cuts=1)
+    # config_file.add_sample(name="WminusH", root_file="WminusH_final_merged_combined.root",cuts=1)
+    # # config_file.add_sample(name="ZH", root_file="ZH.root",cuts=1)
+    # config_file.add_sample(name="ZH", root_file="ZH_final_merged_combined.root",cuts=1)
+    # config_file.add_sample(name="ttH", root_file="ttH_final_merged_combined.root",cuts=1)
+    # config_file.add_sample(name="bbH", root_file="bbH_final_merged_combined.root",cuts=1)
 
     create_plots(config_file)
 
