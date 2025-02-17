@@ -18,10 +18,10 @@ args = parser.parse_args()
 DATA_FILES = [
     # "merged_data.root"
     # "DoubleMuon_merged.root",
+    # "SingleMuon_merged.root",
     "EGamma_merged.root",
     "MuonEG_merged.root",
     "Muon_merged.root"
-    # "SingleMuon_merged.root"
 ]
 
 def create_RDF(filename):
