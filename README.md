@@ -4,17 +4,20 @@ Input trees are produced using [NanoHc](https://github.com/H-charm/NanoHc.git) f
 Checkout  
 ---------------    
 ```bash  
-git clone https://github.com/H-charm/PlotToolsHc.git    
+git clone https://github.com/H-charm/PlotToolsHc.git
+git checkout nikos
 ```  
+Dependencies
+---------------
+A specific version of the cmsstyle package is required. Install it using:
+```bash
+pip install --user cmsstyle==0.4.3
+```
 
 Run  
 -----------  
-```bash  
-python3 makePlots.py (--type ["shape","stack"])  
-```
+Before running the script change setting in `config.py`
 
-Notes  
------  
-- You can change settings in config.py  
-- You can add/remove samples in makePlots.py  
-- If you want to plot branches not already present in the trees (eg DeltaR) you can calculate this by implementing C++ functions (cpp_functions.C)  
+```bash  
+python3 makePlotsCMS.py (-d <PathToDataFiles>)  
+```
