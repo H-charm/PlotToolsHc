@@ -17,8 +17,8 @@ args = parser.parse_args()
 
 DATA_FILES = [
     # "merged_data.root"
-    # "DoubleMuon_merged.root",
-    # "SingleMuon_merged.root",
+    "DoubleMuon_merged.root",
+    "SingleMuon_merged.root",
     "EGamma_merged.root",
     "MuonEG_merged.root",
     "Muon_merged.root"
@@ -33,40 +33,10 @@ def create_RDF(filename):
     df = df.Define("final_weight", config_file.weights)
     return df
 
-# def create_RDF(filename):
-#     print(f"Creating RDF for sample {filename}")
-#     filename_path = os.path.join(config_file.base_dir, filename)
-#     df = ROOT.RDataFrame("Events", filename_path)
-
-#     # Determine the sample name from the filename
-#     sample_name = None
-#     for key in weights_2022.keys():
-#         if key in filename:
-#             sample_name = key
-#             break
-
-#     if sample_name is None:
-#         print(f"Warning: No weight found for {filename}. Using default weight = 1.0")
-#         weight_expr = "1.0"
-#     else:
-#         weight_expr = weights_2022[sample_name]
-
-#     # Apply the correct weight
-#     df = df.Define("final_weight", weight_expr)
-#     return df
-
-
 def merge_data_RDF():
     """Create a single RDataFrame from multiple ROOT data files."""
     file_paths = [os.path.join(args.data, f) for f in DATA_FILES]
     return ROOT.RDataFrame("Events", file_paths)
-    # """Merge all data ROOT files into a single RDataFrame."""
-    # rdf_list = []
-    # for f in DATA_FILES:
-    #     filename_path = os.path.join(args.data, f)
-    #     df = ROOT.RDataFrame("Events", filename_path)
-    #     rdf_list.append(df)
-    # return ROOT.RDataFrame.Merge(rdf_list)
 
 def create_plots(config_file):
     samples_dict = config_file.samples_dict
@@ -85,9 +55,10 @@ def create_plots(config_file):
     # CMS Styling Settings
     CMS.SetExtraText("Preliminary")
     CMS.SetLumi(config_file.dataset_legend)
-    CMS.SetEnergy("13.6")
+    CMS.SetEnergy(config_file.energy)
     CMS.ResetAdditionalInfo()
 
+    # Loop for each variable
     for variable in variables:
         print(f"Plotting var {variable[0]}")
         histos_dict = {}
@@ -99,11 +70,12 @@ def create_plots(config_file):
             )
             # hist = utils.add_underflow(hist)
             hist = utils.add_overflow(hist)
-            if args.type == "stack":
-                hist.SetLineColor(ROOT.kBlack)
-            if args.type == "shape":
-                # hist.SetLineColor(config_file.colors[sample])
-                hist.Scale(1 / hist.Integral())
+            # hist.SetLineColor(ROOT.kBlack)
+            # if args.type == "stack":
+            #     
+            # if args.type == "shape":
+            #     # hist.SetLineColor(config_file.colors[sample])
+            #     hist.Scale(1 / hist.Integral())
             histos_dict[sample] = hist.GetPtr()
 
         # Process real data histogram
@@ -113,53 +85,104 @@ def create_plots(config_file):
             )
             # data_hist = utils.add_underflow(data_hist)
             data_hist = utils.add_overflow(data_hist)
-            data_hist.SetMarkerStyle(20)  # Marker style for data points
+            data_hist.SetMarkerStyle(20)
             data_hist.SetMarkerColor(ROOT.kBlack)
-            # data_hist.Scale(1 / data_hist.Integral())
             data_histos[variable[0]] = data_hist.GetPtr()
 
-        # total_integral = sum(hist.Integral() for hist in histos_dict.values())
-        # for hist in histos_dict.values():
-        #     hist.Scale(1.0 / total_integral)
-
-        # CMSStyle Canvas and Legend
+        # CMSStyle Canvas
         canv_name = f"{variable[1]}_canvas"
-        y_title = "Events" if args.type == "stack" else "Normalized to 1"
+        y_title = "Events"
         canvas = CMS.cmsCanvas(canv_name, variable[4], variable[5], 0, 1, variable[2], y_title, square=CMS.kSquare, extraSpace=0.05, iPos=0)
 
+        # Define different stack plots for each case 
         stack = ROOT.THStack("stack", f";{variable[2]};{y_title}")
-        stack2 = ROOT.THStack("stack2", f";{variable[2]};{y_title}")
-        legend = CMS.cmsLeg(0.22, 0.65, 0.92, 0.88, textSize=0.025, columns=4)
-        
-        for sample, hist in histos_dict.items():
-            stack2.Add(hist)
+        stack_temp = ROOT.THStack("stack_temp", f";{variable[2]};{y_title}")
+        stack_ratio = ROOT.THStack("stack_ratio", f";{variable[2]};{y_title}")
 
+        legend = CMS.cmsLeg(0.22, 0.65, 0.92, 0.88, textSize=0.025, columns=4)
+
+        for sample, hist in histos_dict.items():
+            stack_temp.Add(hist)
         
         # Adjust y-axis offsets and log scaling
         y_max = 1
         y_min = 0.0
         if config_file.set_logy:
             canvas.SetLogy()
-            y_max = 10 * CMS.cmsReturnMaxY(stack2)
+            y_max = 10 * CMS.cmsReturnMaxY(stack_temp)
             y_min = 1.0
-        elif config_file.set_logy and args.type == "stack": 
-            y_max = 2.5 * CMS.cmsReturnMaxY(stack2)
+        # elif config_file.set_logy: 
+        #     y_max = 2.5 * CMS.cmsReturnMaxY(stack_temp)
         else:
-            y_max = 1.2* CMS.cmsReturnMaxY(stack2)
+            y_max = 1.2* CMS.cmsReturnMaxY(stack_temp)
 
         # Set the CMS canvas y-axis
         CMS.GetcmsCanvasHist(canvas).GetYaxis().SetRangeUser(y_min, y_max)
         CMS.GetcmsCanvasHist(canvas).GetYaxis().SetTitleOffset(1.6)
-        # Scientific notation
-        hdf = CMS.GetcmsCanvasHist(canvas)
-        hdf.GetYaxis().SetMaxDigits(2)
-        # Shift multiplier position
-        ROOT.TGaxis.SetExponentOffset(-0.10, 0.01, "Y")
 
+        scientific_notation = True
+        # Scientific notation
+        if scientific_notation:
+            hdf = CMS.GetcmsCanvasHist(canvas)
+            hdf.GetYaxis().SetMaxDigits(2)
+            # Shift multiplier position
+            ROOT.TGaxis.SetExponentOffset(-0.10, 0.01, "Y")
+
+        # Draw stack plot with cmsstyle
         CMS.cmsDrawStack(stack, legend, histos_dict, data=(data_histos[variable[0]] if args.data else None))
 
-        # Save the canvas
-        canvas.SaveAs(os.path.join(config_file.output_plots_dir, args.type, f"{variable[1]}." + config_file.plot_format))
+        # Save canvas
+        CMS.SaveCanvas(canvas,os.path.join(config_file.output_plots_dir, args.type, f"{variable[1]}." + config_file.plot_format), close= True)
+
+        #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        # Ratio plots
+        #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        
+        # CMSStyle DiCanvas
+        canv_name_ratio = f"{variable[1]}_canvas_ratio"
+        canvas_ratio = CMS.cmsDiCanvas(canv_name_ratio, variable[4], variable[5], y_min, y_max, 0, 2, variable[2], y_title, "Ratio", square=CMS.kSquare, extraSpace=0.05, iPos=0 )
+        legend_ratio = CMS.cmsLeg(0.22, 0.65, 0.92, 0.88, textSize=0.025, columns=4)
+
+        # Draw stack plot in the upper pad using cmsstyle
+        CMS.cmsDrawStack(stack_ratio, legend_ratio, histos_dict, data=(data_histos[variable[0]] if args.data else None))
+        
+        # Change to the bottom pad
+        canvas_ratio.cd(2)
+        
+        # Sum all MC histograms to create the denominator
+        mc_total_hist = stack_ratio.GetStack().Last().Clone("mc_total_hist")  # Get the total stacked MC histogram
+        data_hist = data_histos[variable[0]]
+
+        # Compute the ratio Data/MC
+        ratio_hist = data_hist.Clone("ratio_hist")
+        ratio_hist.Divide(mc_total_hist)
+
+        # Style the ratio plot
+        ratio_hist.SetMarkerStyle(20)
+        ratio_hist.SetMarkerColor(ROOT.kBlack)
+        ratio_hist.SetLineColor(ROOT.kBlack)
+        # Format for Y axis
+        ratio_hist.GetYaxis().SetTitle("Data / MC")
+        ratio_hist.GetYaxis().SetTitleSize(0.13)
+        ratio_hist.GetYaxis().SetLabelSize(0.11)
+        ratio_hist.GetYaxis().SetTitleOffset(0.5)
+        ratio_hist.GetYaxis().SetRangeUser(0,2)
+        ratio_hist.GetYaxis().SetNdivisions(505)
+        # Format for X axis
+        ratio_hist.GetXaxis().SetTitle(variable[2])
+        ratio_hist.GetXaxis().SetTitleSize(0.13)
+        ratio_hist.GetXaxis().SetLabelSize(0.11)
+        # Draw with error bars
+        ratio_hist.Draw("EP")  
+
+        # Draw a horizontal line at y=1 for reference
+        line = ROOT.TLine(variable[4], 1, variable[5], 1)
+        line.SetLineStyle(2)
+        line.SetLineColor(ROOT.kBlack)
+        line.Draw("same")
+
+        # Save canvas
+        CMS.SaveCanvas(canvas_ratio,os.path.join(config_file.output_plots_dir, args.type, f"{variable[1]}_ratio." + config_file.plot_format), close= True)
 
 if __name__ == "__main__":
     start_time = time.time()
@@ -169,14 +192,9 @@ if __name__ == "__main__":
 
     # Samples will be stacked in this order
     
-    config_file.add_sample(name="ggZZ_2E2Mu", root_file="ggZZ_2E2Mu_final_merged.root",cuts=1)
-    config_file.add_sample(name="ggZZ_2E2Tau", root_file="ggZZ_2E2Tau_final_merged.root",cuts=1)
-    config_file.add_sample(name="ggZZ_2Mu2Tau", root_file="ggZZ_2Mu2Tau_final_merged.root",cuts=1)
-    config_file.add_sample(name="ggZZ_4E", root_file="ggZZ_4E_final_merged.root",cuts=1)
-    config_file.add_sample(name="ggZZ_4Mu", root_file="ggZZ_4Mu_final_merged.root",cuts=1)
-    config_file.add_sample(name="ggZZ_4Tau", root_file="ggZZ_4Tau_final_merged.root",cuts=1)
-    # config_file.add_sample(name="ggZZ", root_file="ggZZ_final_merged.root",cuts=1)
+    config_file.add_sample(name="ggZZ", root_file="ggZZ_final_merged.root",cuts=1)
     config_file.add_sample(name="qqZZ", root_file="qqZZ_final_merged.root",cuts=1)
+    # config_file.add_sample(name="VBFToZZ", root_file="VBFToZZ_final_merged.root",cuts=1)
     config_file.add_sample(name="WWZ", root_file="WWZ_final_merged.root",cuts=1)
     config_file.add_sample(name="WZZ", root_file="WZZ_final_merged.root",cuts=1)
     config_file.add_sample(name="ZZZ", root_file="ZZZ_final_merged.root",cuts=1)
@@ -194,32 +212,6 @@ if __name__ == "__main__":
     config_file.add_sample(name="ttH", root_file="ttH_final_merged.root",cuts=1)
     config_file.add_sample(name="bbH", root_file="bbH_final_merged.root",cuts=1)
     # config_file.add_sample(name="Hc", root_file="Hc_tree.root",cuts=1)
- 
-
-    # config_file.add_sample(name="ggZZ_2E2Mu", root_file="ggZZ_2E2Mu_combined.root",cuts=1)
-    # config_file.add_sample(name="ggZZ_2E2Tau", root_file="ggZZ_2E2Tau_combined.root",cuts=1)
-    # config_file.add_sample(name="ggZZ_2Mu2Tau", root_file="ggZZ_2Mu2Tau_combined.root",cuts=1)
-    # config_file.add_sample(name="ggZZ_4E", root_file="ggZZ_4E_combined.root",cuts=1)
-    # config_file.add_sample(name="ggZZ_4Mu", root_file="ggZZ_4Mu_combined.root",cuts=1)
-    # config_file.add_sample(name="ggZZ_4Tau", root_file="ggZZ_4Tau_combined.root",cuts=1)
-    # config_file.add_sample(name="qqZZ", root_file="qqZZ_final_merged_combined.root",cuts=1)
-    # config_file.add_sample(name="WWZ", root_file="WWZ_final_merged_combined.root",cuts=1)
-    # config_file.add_sample(name="WZZ", root_file="WZZ_final_merged_combined.root",cuts=1)
-    # config_file.add_sample(name="ZZZ", root_file="ZZZ_final_merged_combined.root",cuts=1)
-    # config_file.add_sample(name="TTWW", root_file="TTWW_final_merged_combined.root",cuts=1)
-    # config_file.add_sample(name="TTZZ", root_file="TTZZ_final_merged_combined.root",cuts=1)
-    # config_file.add_sample(name="WZ", root_file="WZ_final_merged_combined.root",cuts=1)
-    # # config_file.add_sample(name="DYJets", root_file="DYJets.root",cuts=1)
-    # # config_file.add_sample(name="TTto2L2Nu", root_file="TTto2L2Nu.root",cuts=1)
-    # config_file.add_sample(name="ggH", root_file="ggH_final_merged_combined.root",cuts=1)
-    # config_file.add_sample(name="VBF", root_file="VBF_final_merged_combined.root",cuts=1)
-    # config_file.add_sample(name="WplusH", root_file="WplusH_final_merged_combined.root",cuts=1)
-    # config_file.add_sample(name="WminusH", root_file="WminusH_final_merged_combined.root",cuts=1)
-    # # config_file.add_sample(name="ZH", root_file="ZH.root",cuts=1)
-    # config_file.add_sample(name="ZH", root_file="ZH_final_merged_combined.root",cuts=1)
-    # config_file.add_sample(name="ttH", root_file="ttH_final_merged_combined.root",cuts=1)
-    # config_file.add_sample(name="bbH", root_file="bbH_final_merged_combined.root",cuts=1)
-
     create_plots(config_file)
 
     end_time = time.time()
