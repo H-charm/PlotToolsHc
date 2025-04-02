@@ -99,7 +99,7 @@ def create_plots(config_file):
         stack_temp = ROOT.THStack("stack_temp", f";{variable[2]};{y_title}")
         stack_ratio = ROOT.THStack("stack_ratio", f";{variable[2]};{y_title}")
 
-        legend = CMS.cmsLeg(0.22, 0.65, 0.92, 0.88, textSize=0.025, columns=4)
+        legend = CMS.cmsLeg(0.68, 0.69, 0.88, 0.87, textSize=0.025, columns=1)
 
         for sample, hist in histos_dict.items():
             stack_temp.Add(hist)
@@ -141,7 +141,7 @@ def create_plots(config_file):
         # CMSStyle DiCanvas
         canv_name_ratio = f"{variable[1]}_canvas_ratio"
         canvas_ratio = CMS.cmsDiCanvas(canv_name_ratio, variable[4], variable[5], y_min, y_max, 0, 2, variable[2], y_title, "Ratio", square=CMS.kSquare, extraSpace=0.05, iPos=0 )
-        legend_ratio = CMS.cmsLeg(0.22, 0.65, 0.92, 0.88, textSize=0.025, columns=4)
+        legend_ratio = CMS.cmsLeg(0.68, 0.69, 0.88, 0.87, textSize=0.025, columns=1)
 
         # Draw stack plot in the upper pad using cmsstyle
         CMS.cmsDrawStack(stack_ratio, legend_ratio, histos_dict, data=(data_histos[variable[0]] if args.data else None))
@@ -212,9 +212,9 @@ if __name__ == "__main__":
     # config_file.add_sample(name="ttH", root_file="ttH_final_merged.root",cuts=1)
     # config_file.add_sample(name="bbH", root_file="bbH_final_merged.root",cuts=1)
     # # config_file.add_sample(name="Hc", root_file="Hc_tree.root",cuts=1)
-    config_file.add_sample(name="WZ", root_file="WZ_merged.root",cuts=1)
-    config_file.add_sample(name="TTto2L2Nu", root_file="TTto2L2Nu_merged.root",cuts=1)
-    config_file.add_sample(name="DYJets", root_file="DYJets_merged.root",cuts=1)
+    config_file.add_sample(name="WZ", root_file="WZ_final_merged.root",cuts=1)
+    config_file.add_sample(name="TTto2L2Nu", root_file="TTto2L2Nu_final_merged.root",cuts=1)
+    config_file.add_sample(name="DYJets", root_file="DYJets_final_merged.root",cuts=1)
     create_plots(config_file)
 
     end_time = time.time()
