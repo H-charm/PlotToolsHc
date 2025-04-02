@@ -71,54 +71,49 @@ class Config:
       # ["deltaR(lep3_eta, lep4_eta, lep3_phi, lep4_phi)","dR_lep3_lep_4","#DeltaR(lep3,lep4)", 60, 0, 6],
       ]
     
-    self.output_plots_dir = "plots/trees_14_02/weighted/2022_2023"
-    self.base_dir = "/eos/user/n/nplastir/H+c/trees_14_02/mc/2022_2023/"
+    self.output_plots_dir = "plots/trees_24_02/test"
+    self.base_dir = "/eos/user/n/nplastir/H+c/trees_24_02/mc/2022_2023_Combined"
     self.cuts = "1" # if you don't want cuts remember to put "1"
-    self.weights =  "genWeight * xsecWeight * lumiwgt " #"genWeight * xsecWeight * puWeight" #"LHEScaleWeightNorm * LHEPdfWeightNorm * PSWeightNorm"
-    self.plot_format = "pdf"
-    self.dataset_legend = "64.6" #"34.7" #37.3 #{"2022": 7.98, "2022EE": 26.67, "2023": 17.794, "2023BPix": 9.451}
+    self.weights =  "genWeight * xsecWeight * lumiwgt * puWeight * muEffWeight * elEffWeight" #"LHEScaleWeightNorm * LHEPdfWeightNorm * PSWeightNorm"
+    self.plot_format = "png"
+    self.energy = "13.6"
+    self.dataset_legend = "61.95"
+#     lumi_dict = {
+#     "2016APV": 19.52,
+#     "2016": 16.81,
+#     "2017": 41.53,
+#     "2018": 59.74,
+#     "2022": 7.98, 
+#     "2022EE": 26.67, 
+#     "2023": 17.794, 
+#     "2023BPix": 9.451
+# }
     self.stack_ymin = 1
     self.stack_ymax = 5e6
     self.set_logy = False 
     self.samples_dict = {}
     
-    ## plot legend
-    self.legend = {
-      "ggH":"ggH", 
-      "VBF":"VBF", 
-      "WplusH":"WplusH", 
-      "WminusH":"WminusH", 
-      "ZH":"ZH", 
-      "ttH":"ttH",
-      "bbH":"bbH",
-      "qqZZ": "qqZZ",
-      "ggZZ": "ggZZ",
-      # "WWZ": "WWZ",
-      # "WZZ": "WZZ",
-      # "ZZZ": "ZZZ",
-      # "TTWW": "TTWW",
-      # "TTZZ": "TTZZ",
-      # "WZ": "WZ",
-      # "DYJets":"DYJets",
-      # "TTto2L2Nu":"TTto2L2Nu",
-      # "Hc":"Hc",
-    }
-    
-    ## plot colors
-    self.colors = {
-      "DYJets": 829,
-      # "ggH": 38,
-      # "VBF": 43,
-      # "bbH": 821,
-      # "Hc": 880,
-      # "tqH": 829,
-      # "ttH": 811,
-      # "VH": 859,
-      "WZ": 859,
-      "ZZ": 623,
-    }  
-    
-    
+    # ## plot legend
+    # self.legend = {
+    #   "ggH":"ggH", 
+    #   "VBF":"VBF", 
+    #   "WplusH":"WplusH", 
+    #   "WminusH":"WminusH", 
+    #   "ZH":"ZH", 
+    #   "ttH":"ttH",
+    #   "bbH":"bbH",
+    #   "qqZZ": "qqZZ",
+    #   "ggZZ": "ggZZ",
+    #   # "WWZ": "WWZ",
+    #   # "WZZ": "WZZ",
+    #   # "ZZZ": "ZZZ",
+    #   # "TTWW": "TTWW",
+    #   # "TTZZ": "TTZZ",
+    #   # "WZ": "WZ",
+    #   # "DYJets":"DYJets",
+    #   # "TTto2L2Nu":"TTto2L2Nu",
+    #   # "Hc":"Hc",
+    # }   
     
   ## YOU DON'T NEED TO CHANGE ANYTHING HERE
   ## useful functions
