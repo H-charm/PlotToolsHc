@@ -50,50 +50,71 @@ def create_fr_plot(config_file):
     if not binning:
         raise ValueError("ZLalle_pt2 configuration not found in config.vars")
 
-    # Create histograms
-    bins_array = ROOT.std.vector("double")(binning)
+    # Create cuts
+    barrel_cut_all = "ZLalle_eta2.size() > 0 && std::abs(ZLalle_eta2[0]) < 0.83"
+    endcap_cut_all = "ZLalle_eta2.size() > 0 && std::abs(ZLalle_eta2[0]) >= 0.83"
+    barrel_cut_pass = "ZLpasse_eta2.size() > 0 && std::abs(ZLpasse_eta2[0]) < 0.83"
+    endcap_cut_pass = "ZLpasse_eta2.size() > 0 && std::abs(ZLpasse_eta2[0]) >= 0.83"
     
-    # Denominator histogram (ZLalle_pt2)
-    hist_alle = data_df.Filter(config_file.cuts)\
-                       .Define("plotvar_alle", "ZLalle_pt2")\
-                       .Histo1D(("hist_alle", "", len(binning)-1, bins_array.data()), 
-                       "plotvar_alle")
-    
-    # Numerator histogram (ZLpasse_pt2)
-    hist_passe = data_df.Filter(config_file.cuts)\
-                        .Define("plotvar_passe", "ZLpasse_pt2")\
-                        .Histo1D(("hist_passe", "", len(binning)-1, bins_array.data()), 
-                        "plotvar_passe")
+    # Create histograms for different regions
+    def process_region(cut_all, cut_pass, color, name):
+        bins_array = ROOT.std.vector("double")(binning)
+        
+        # Denominator histogram
+        hist_alle = data_df.Filter(cut_all)\
+                           .Define("plotvar_alle", "ZLalle_pt2")\
+                           .Histo1D(("hist_alle_"+name, "", len(binning)-1, bins_array.data()), 
+                                      "plotvar_alle")
+        
+        # Numerator histogram
+        hist_passe = data_df.Filter(cut_pass)\
+                            .Define("plotvar_passe", "ZLpasse_pt2")\
+                            .Histo1D(("hist_passe_"+name, "", len(binning)-1, bins_array.data()), 
+                                       "plotvar_passe")
 
-    # Add overflow
-    hist_alle = utils.add_overflow(hist_alle.GetPtr())
-    hist_passe = utils.add_overflow(hist_passe.GetPtr())
+        # Add overflow
+        hist_alle = utils.add_overflow(hist_alle.GetPtr())
+        hist_passe = utils.add_overflow(hist_passe.GetPtr())
 
-    # Create Fake Rate histogram
-    fr_hist = hist_passe.Clone("fr_hist")
-    fr_hist.Divide(hist_alle)
-    
+        # Create Fake Rate histogram
+        fr_hist = hist_passe.Clone("fr_hist_"+name)
+        fr_hist.Divide(hist_alle)
+        
+        # Style
+        fr_hist.SetMarkerStyle(20)
+        fr_hist.SetMarkerColor(color)
+        fr_hist.SetLineColor(color)
+        fr_hist.SetLineWidth(2)
+        fr_hist.GetYaxis().SetRangeUser(0, 0.35)
+        
+        return fr_hist
+
+    # Process both regions
+    fr_barrel = process_region(barrel_cut_all, barrel_cut_pass, ROOT.kBlue, "barrel")
+    fr_endcap = process_region(endcap_cut_all, endcap_cut_pass, ROOT.kRed, "endcap")
+
     # Create canvas
     x_min, x_max = binning[0], binning[-1]
     canvas = CMS.cmsCanvas("fr_canvas", x_min, x_max, 0, 0.35, 
                           x_title, "Fake Rate", 
                           square=CMS.kSquare, extraSpace=0.05)
 
-    # Style the histogram
-    fr_hist.SetMarkerStyle(20)
-    fr_hist.SetMarkerColor(ROOT.kBlack)
-    fr_hist.SetLineColor(ROOT.kBlack)
-    fr_hist.SetLineWidth(2)
+    # Draw histograms
+    fr_barrel.Draw("EP")
+    fr_endcap.Draw("EP SAME")
 
-    fr_hist.GetYaxis().SetRangeUser(0, 0.35)
-    
-    # Draw the histogram
-    fr_hist.Draw("EP")
-   
+    # Add legend
+    legend = ROOT.TLegend(0.65, 0.75, 0.85, 0.85)
+    legend.SetBorderSize(0)
+    legend.SetTextSize(0.04)
+    legend.AddEntry(fr_barrel, "Barrel (|#eta| < 0.83)", "lep")
+    legend.AddEntry(fr_endcap, "Endcap (|#eta| #geq 0.83)", "lep")
+    legend.Draw()
+
     # Save plot
     output_dir = os.path.join(config_file.output_plots_dir, "fr_plots")
     os.makedirs(output_dir, exist_ok=True)
-    CMS.SaveCanvas(canvas, os.path.join(output_dir, f"fake_rate.{config_file.plot_format}"))
+    CMS.SaveCanvas(canvas, os.path.join(output_dir, f"fake_rate_comparison.{config_file.plot_format}"))
 
 if __name__ == "__main__":
     start_time = time.time()
