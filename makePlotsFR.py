@@ -49,18 +49,6 @@ def create_fr_plot(config_file):
     
     if not binning:
         raise ValueError("ZLalle_pt2 configuration not found in config.vars")
-
-    # Cuts for electrons
-    barrel_cut_all_electrons = "ZLalle_eta2.size() > 0 && std::abs(ZLalle_eta2[0]) < 0.83"
-    endcap_cut_all_electrons = "ZLalle_eta2.size() > 0 && std::abs(ZLalle_eta2[0]) >= 0.83"
-    barrel_cut_pass_electrons = "ZLpasse_eta2.size() > 0 && std::abs(ZLpasse_eta2[0]) < 0.83"
-    endcap_cut_pass_electrons = "ZLpasse_eta2.size() > 0 && std::abs(ZLpasse_eta2[0]) >= 0.83"
-    # Cuts for muons
-    barrel_cut_all_muons = "ZLallmu_eta2.size() > 0 && std::abs(ZLallmu_eta2[0]) < 0.83"
-    endcap_cut_all_muons = "ZLallmu_eta2.size() > 0 && std::abs(ZLallmu_eta2[0]) >= 0.83"
-    barrel_cut_pass_muons = "ZLpassmu_eta2.size() > 0 && std::abs(ZLpassmu_eta2[0]) < 0.83"
-    endcap_cut_pass_muons = "ZLpassmu_eta2.size() > 0 && std::abs(ZLpassmu_eta2[0]) >= 0.83"
-
     
     # Create histograms for different regions
     def process_region(particle, cut_all, cut_pass, color, name):
@@ -118,7 +106,7 @@ def create_fr_plot(config_file):
         canvases[particle] = CMS.cmsCanvas(
             f"fr_canvas_{particle}", x_min, x_max, 0, 0.35, 
             x_title, "Fake Rate", 
-            square=CMS.kSquare, extraSpace=0.05
+            square=CMS.kSquare, extraSpace=0.05, iPos=0
         )
         
         # Draw histograms
