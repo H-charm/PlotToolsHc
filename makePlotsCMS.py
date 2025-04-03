@@ -103,7 +103,6 @@ def create_plots(config_file):
             data_hist.SetMarkerStyle(20)
             data_hist.SetMarkerColor(ROOT.kBlack)
             data_histos[variable[0]] = data_hist.GetPtr()
-            
 
         # CMSStyle Canvas
         canv_name = f"{variable[1]}_canvas"
@@ -206,7 +205,6 @@ def create_plots(config_file):
 
         # Save canvas
         CMS.SaveCanvas(canvas_ratio,os.path.join(config_file.output_plots_dir, args.type, f"{variable[1]}_ratio." + config_file.plot_format), close= True)
-
 
 if __name__ == "__main__":
     start_time = time.time()
