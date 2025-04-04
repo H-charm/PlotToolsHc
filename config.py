@@ -34,29 +34,26 @@ class Config:
     self.ZLpass_prefix = "ZLpass_"
     self.ZLpasse_prefix = "ZLpasse_"
     self.ZLpassmu_prefix = "ZLpassmu_"
-
-    self.scale_pt_temp = [0, 10, 20, 30, 40, 50, 80]
-    self.scale_pt  = array('d', self.scale_pt_temp)
       
     ## [branch name, plot name, x-axis label, nbins, xlow, xhigh]
     self.vars = [
       # [self.el_prefix + "pt","el_pt","Electron p_{T} [GeV]", 100, 0, 200],
       # [self.mu_prefix + "pt","mu_pt","Muon p_{T} [GeV]", 100, 0, 200],
-      [self.ZLall_prefix + "pt2", "l_pt", "Extra lepton p_{T} [GeV]", 8, 0, 80],
-      [self.ZLalle_prefix + "pt2", "e_pt", "Extra electron p_{T} [GeV]", 8, 0, 80],
-      [self.ZLallmu_prefix + "pt2", "mu_pt", "Extra muon p_{T} [GeV]", 8, 0, 80],
-      # [self.ZLall_prefix + "pt2", "l_pt", "Extra lepton p_{T} [GeV]", len(self.scale_pt_temp)-1,  self.scale_pt],
-      # [self.ZLalle_prefix + "pt2", "e_pt", "Extra electron p_{T} [GeV]", len(self.scale_pt_temp)-1,  self.scale_pt],
-      # [self.ZLallmu_prefix + "pt2", "mu_pt", "Extra muon p_{T} [GeV]", len(self.scale_pt_temp)-1,  self.scale_pt],
+      # [self.ZLall_prefix + "pt2", "l_pt", "Extra lepton p_{T} [GeV]", 8, 0, 80],
+      # [self.ZLalle_prefix + "pt2", "e_pt", "Extra electron p_{T} [GeV]", 8, 0, 80],
+      # [self.ZLallmu_prefix + "pt2", "mu_pt", "Extra muon p_{T} [GeV]", 8, 0, 80],
+      [self.ZLall_prefix + "pt2", "l_pt", "Extra lepton p_{T} [GeV]",[0, 10, 20, 30, 40, 50, 80]],
+      [self.ZLalle_prefix + "pt2", "e_pt", "Extra electron p_{T} [GeV]",[0, 10, 20, 30, 40, 50, 80]],
+      [self.ZLallmu_prefix + "pt2", "mu_pt", "Extra muon p_{T} [GeV]",[0, 10, 20, 30, 40, 50, 80]],
       [self.ZLall_prefix + "eta2", "l_eta", "Extra lepton #eta [GeV]", 100, -3, 3],
       [self.ZLalle_prefix + "eta2", "e_eta", "Extra electron #eta [GeV]", 100, -3, 3],
       [self.ZLallmu_prefix + "eta2", "mu_eta", "Extra muon #eta [GeV]", 100, -3, 3],
-      [self.ZLpass_prefix + "pt2", "l_pass_pt", "Extra lepton passed p_{T} [GeV]", 8, 0, 80],
-      [self.ZLpasse_prefix + "pt2", "e_pass_pt", "Extra electron passed p_{T} [GeV]", 8, 0, 80],
-      [self.ZLpassmu_prefix + "pt2", "mu_pass_pt", "Extra muon passed p_{T} [GeV]", 8, 0, 80],
-      # [self.ZLpass_prefix + "pt2", "l_pass_pt", "Extra lepton passed p_{T} [GeV]", len(self.scale_pt_temp)-1,  self.scale_pt],
-      # [self.ZLpasse_prefix + "pt2", "e_pass_pt", "Extra electron passed p_{T} [GeV]", len(self.scale_pt_temp)-1,  self.scale_pt],
-      # [self.ZLpassmu_prefix + "pt2", "mu_pass_pt", "Extra muon passed p_{T} [GeV]", len(self.scale_pt_temp)-1,  self.scale_pt],
+      # [self.ZLpass_prefix + "pt2", "l_pass_pt", "Extra lepton passed p_{T} [GeV]", 8, 0, 80],
+      # [self.ZLpasse_prefix + "pt2", "e_pass_pt", "Extra electron passed p_{T} [GeV]", 8, 0, 80],
+      # [self.ZLpassmu_prefix + "pt2", "mu_pass_pt", "Extra muon passed p_{T} [GeV]", 8, 0, 80],
+      [self.ZLpass_prefix + "pt2", "l_pass_pt", "Extra lepton passed p_{T} [GeV]",[0, 10, 20, 30, 40, 50, 80]],
+      [self.ZLpasse_prefix + "pt2", "e_pass_pt", "Extra electron passed p_{T} [GeV]",[0, 10, 20, 30, 40, 50, 80]],
+      [self.ZLpassmu_prefix + "pt2", "mu_pass_pt", "Extra muon passed p_{T} [GeV]",[0, 10, 20, 30, 40, 50, 80]],
       [self.ZLpass_prefix + "eta2", "l_pass_eta", "Extra lepton passed #eta [GeV]", 100, -3, 3],
       [self.ZLpasse_prefix + "eta2", "e_pass_eta", "Extra electron passed #eta [GeV]", 100, -3, 3],
       [self.ZLpassmu_prefix + "eta2", "mu_pass_eta", "Extra muon passed #eta [GeV]", 100, -3, 3],
@@ -69,43 +66,21 @@ class Config:
     self.plot_format = "png"
     self.energy = "13.6"
     self.dataset_legend = "7.98"
-#     lumi_dict = {
-#     "2016APV": 19.52,
-#     "2016": 16.81,
-#     "2017": 41.53,
-#     "2018": 59.74,
-#     "2022": 7.98, 
-#     "2022EE": 26.67, 
-#     "2023": 17.794, 
-#     "2023BPix": 9.451
-# }
+    # Luminosity labels for each year
+    # "2016APV": 19.52,
+    # "2016": 16.81,
+    # "2017": 41.53,
+    # "2018": 59.74,
+    # "2022": 7.98, 
+    # "2022EE": 26.67, 
+    # "2023": 17.794, 
+    # "2023BPix": 9.451
+
     self.stack_ymin = 1
     self.stack_ymax = 5e6
-    self.set_logy = False 
+    self.set_logy = True 
     self.samples_dict = {}
-    
-    # ## plot legend
-    # self.legend = {
-    #   "ggH":"ggH", 
-    #   "VBF":"VBF", 
-    #   "WplusH":"WplusH", 
-    #   "WminusH":"WminusH", 
-    #   "ZH":"ZH", 
-    #   "ttH":"ttH",
-    #   "bbH":"bbH",
-    #   "qqZZ": "qqZZ",
-    #   "ggZZ": "ggZZ",
-    #   # "WWZ": "WWZ",
-    #   # "WZZ": "WZZ",
-    #   # "ZZZ": "ZZZ",
-    #   # "TTWW": "TTWW",
-    #   # "TTZZ": "TTZZ",
-    #   # "WZ": "WZ",
-    #   # "DYJets":"DYJets",
-    #   # "TTto2L2Nu":"TTto2L2Nu",
-    #   # "Hc":"Hc",
-    # }   
-    
+  
   ## YOU DON'T NEED TO CHANGE ANYTHING HERE
   ## useful functions
   
