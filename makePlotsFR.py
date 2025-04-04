@@ -110,7 +110,7 @@ def create_fr_plot(config_file):
         fr_hist.GetYaxis().SetTitleSize(0.05)
         fr_hist.GetYaxis().SetLabelSize(0.05)
         fr_hist.GetYaxis().SetTitleOffset(1.5)
-        fr_hist.GetXaxis().SetTitle("p_{T} [GeV]")
+        fr_hist.GetXaxis().SetTitle("p_{T}(e) [GeV]") if particle == "e" else fr_hist.GetXaxis().SetTitle("p_{T}(#mu) [GeV]")
         fr_hist.GetXaxis().SetTitleSize(0.05)
         fr_hist.GetXaxis().SetLabelSize(0.05)
         fr_hist.GetXaxis().SetTitleOffset(1.2)
