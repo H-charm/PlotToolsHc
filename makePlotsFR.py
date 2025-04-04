@@ -22,6 +22,7 @@ DATA_FILES = [
     "Muon_merged.root"
 ]
 
+
 def merge_data_RDF():
     """Create a single RDataFrame from multiple ROOT data files."""
     file_paths = [os.path.join(args.data, f) for f in DATA_FILES]
@@ -43,6 +44,7 @@ def create_fr_plot(config_file):
     wz_df = wz_df.Define("final_weight", config_file.weights)
     
     # CMS Styling Settings
+    CMS.setCMSStyle
     CMS.SetExtraText("Preliminary")
     CMS.SetLumi(config_file.dataset_legend)
     CMS.SetEnergy(config_file.energy)
@@ -98,29 +100,30 @@ def create_fr_plot(config_file):
             hist_data_all.Add(hist_wz_all, -1.0)
             hist_data_pass.Add(hist_wz_pass, -1.0)
 
-            # Create Fake Rate histogram
-            fr_hist = hist_data_pass.Clone("fr_hist_"+name)
-            fr_hist.Divide(hist_data_all)
-
-            # Style
-            fr_hist.SetMarkerStyle(20)
-            fr_hist.SetMarkerColor(color)
-            fr_hist.SetLineColor(color)
-            fr_hist.SetLineWidth(2)
-            fr_hist.SetLineStyle(7)
-            fr_hist.GetYaxis().SetRangeUser(0, 1)
+        # Create Fake Rate histogram
+        fr_hist = hist_data_pass.Clone("fr_hist_"+name)
+        fr_hist.Divide(hist_data_all)
+        # Style
+        fr_hist.SetMarkerStyle(20)
+        fr_hist.SetMarkerColor(color)
+        fr_hist.SetLineColor(color)
+        fr_hist.SetLineWidth(2)
+        if corr:
+            fr_hist.SetLineStyle(7) 
+        if particle == "e":
+            fr_hist.GetYaxis().SetRangeUser(0, 0.35)
         else:
-            # Create Fake Rate histogram
-            fr_hist = hist_data_pass.Clone("fr_hist_"+name)
-            fr_hist.Divide(hist_data_all)
-            
-            # Style
-            fr_hist.SetMarkerStyle(20)
-            fr_hist.SetMarkerColor(color)
-            fr_hist.SetLineColor(color)
-            fr_hist.SetLineWidth(2)
             fr_hist.GetYaxis().SetRangeUser(0, 1)
+        fr_hist.GetYaxis().SetTitle("Fake Rate")
+        fr_hist.GetYaxis().SetTitleSize(0.05)
+        fr_hist.GetYaxis().SetLabelSize(0.05)
+        fr_hist.GetYaxis().SetTitleOffset(1.5)
 
+        fr_hist.GetXaxis().SetTitle("p_{T} [GeV]")
+        fr_hist.GetXaxis().SetTitleSize(0.05)
+        fr_hist.GetXaxis().SetLabelSize(0.05)
+        fr_hist.GetXaxis().SetTitleOffset(1.2)
+            
         return fr_hist
 
     particles = ["electrons", "muons"]
@@ -146,23 +149,21 @@ def create_fr_plot(config_file):
                 # Create canvas
         canvas = CMS.cmsCanvas(f"fr_canvas_{particle}", binning[0], binning[-1], 0, 0.35,
                              x_title, "Fake Rate", square=CMS.kSquare, extraSpace=0.05)
-
+        
         # Draw all four histograms
         fr_barrel.Draw("EP")
         fr_endcap.Draw("EP SAME")
         fr_barrel_corr.Draw("EP SAME")
         fr_endcap_corr.Draw("EP SAME")
 
-        # Enhanced legend
-        legend = ROOT.TLegend(0.6, 0.65, 0.88, 0.85)
-        legend.SetBorderSize(0)
-        legend.SetTextSize(0.035)
+        legend = CMS.cmsLeg(0.6, 0.7, 0.9, 0.9, textSize=0.035, textFont=42)
         legend.AddEntry(fr_barrel, "Barrel Uncorrected", "l")
         legend.AddEntry(fr_barrel_corr, "Barrel Corrected", "l")
         legend.AddEntry(fr_endcap, "Endcap Uncorrected", "l")
         legend.AddEntry(fr_endcap_corr, "Endcap Corrected", "l")
         legend.Draw()
 
+        CMS.CMS_lumi(canvas)
         # Save plot
         output_dir = os.path.join(config_file.output_plots_dir, "fr_plots")
         os.makedirs(output_dir, exist_ok=True)
