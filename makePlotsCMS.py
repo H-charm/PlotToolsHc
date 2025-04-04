@@ -65,7 +65,14 @@ def create_plots(config_file):
 
         for sample in samples_dict.keys():
             df = RDF_dict[samples_dict[sample][0]]
-            hist = df.Filter(config_file.cuts).Define("plotvar_", variable[0]).Histo1D(
+            if isinstance(variable[3], list):  # Variable binning
+                bins_array = ROOT.std.vector("double")(variable[3])
+                hist = df.Filter(config_file.cuts).Define("plotvar_", variable[0]).Histo1D(
+                    (f"hist_{sample}_{variable[0]}", "", len(variable[3]) - 1, bins_array.data()), 
+                    "plotvar_", "final_weight"
+                )
+            else:  # Uniform binning
+                hist = df.Filter(config_file.cuts).Define("plotvar_", variable[0]).Histo1D(
                 (f"hist_{sample}_{variable[0]}", "", variable[3], variable[4], variable[5]), "plotvar_", "final_weight"
             )
             # hist = utils.add_underflow(hist)
@@ -80,9 +87,17 @@ def create_plots(config_file):
 
         # Process real data histogram
         if args.data:
-            data_hist = data_df.Filter(config_file.cuts).Define("plotvar_", variable[0]).Histo1D(
-                (f"hist_data_{variable[0]}", "", variable[3], variable[4], variable[5]), "plotvar_"
-            )
+            if isinstance(variable[3], list):  # Variable binning
+                bins_array = ROOT.std.vector("double")(variable[3])
+                data_hist = data_df.Filter(config_file.cuts).Define("plotvar_", variable[0]).Histo1D(
+                    (f"hist_data_{variable[0]}", "", len(variable[3]) - 1, bins_array.data()), 
+                    "plotvar_"
+                )
+            else:  # Uniform binning
+                data_hist = data_df.Filter(config_file.cuts).Define("plotvar_", variable[0]).Histo1D(
+                    (f"hist_data_{variable[0]}", "", variable[3], variable[4], variable[5]), 
+                    "plotvar_"
+                )
             # data_hist = utils.add_underflow(data_hist)
             data_hist = utils.add_overflow(data_hist)
             data_hist.SetMarkerStyle(20)
@@ -92,14 +107,18 @@ def create_plots(config_file):
         # CMSStyle Canvas
         canv_name = f"{variable[1]}_canvas"
         y_title = "Events"
-        canvas = CMS.cmsCanvas(canv_name, variable[4], variable[5], 0, 1, variable[2], y_title, square=CMS.kSquare, extraSpace=0.05, iPos=0)
+        if isinstance(variable[3], list):  # Variable binning
+            x_min, x_max = variable[3][0], variable[3][-1]  # Use first and last bin edge
+        else:  # Uniform binning
+            x_min, x_max = variable[4], variable[5]  # Use configured range
+        canvas = CMS.cmsCanvas(canv_name, x_min, x_max, 0, 1, variable[2], y_title, square=CMS.kSquare, extraSpace=0.05, iPos=0)
 
         # Define different stack plots for each case 
         stack = ROOT.THStack("stack", f";{variable[2]};{y_title}")
         stack_temp = ROOT.THStack("stack_temp", f";{variable[2]};{y_title}")
         stack_ratio = ROOT.THStack("stack_ratio", f";{variable[2]};{y_title}")
 
-        legend = CMS.cmsLeg(0.22, 0.65, 0.92, 0.88, textSize=0.025, columns=4)
+        legend = CMS.cmsLeg(0.68, 0.69, 0.88, 0.87, textSize=0.025, columns=1)
 
         for sample, hist in histos_dict.items():
             stack_temp.Add(hist)
@@ -110,7 +129,7 @@ def create_plots(config_file):
         if config_file.set_logy:
             canvas.SetLogy()
             y_max = 10 * CMS.cmsReturnMaxY(stack_temp)
-            y_min = 1.0
+            y_min = 0.1
         # elif config_file.set_logy: 
         #     y_max = 2.5 * CMS.cmsReturnMaxY(stack_temp)
         else:
@@ -120,7 +139,7 @@ def create_plots(config_file):
         CMS.GetcmsCanvasHist(canvas).GetYaxis().SetRangeUser(y_min, y_max)
         CMS.GetcmsCanvasHist(canvas).GetYaxis().SetTitleOffset(1.6)
 
-        scientific_notation = True
+        scientific_notation = False
         # Scientific notation
         if scientific_notation:
             hdf = CMS.GetcmsCanvasHist(canvas)
@@ -140,12 +159,15 @@ def create_plots(config_file):
         
         # CMSStyle DiCanvas
         canv_name_ratio = f"{variable[1]}_canvas_ratio"
-        canvas_ratio = CMS.cmsDiCanvas(canv_name_ratio, variable[4], variable[5], y_min, y_max, 0, 2, variable[2], y_title, "Ratio", square=CMS.kSquare, extraSpace=0.05, iPos=0 )
-        legend_ratio = CMS.cmsLeg(0.22, 0.65, 0.92, 0.88, textSize=0.025, columns=4)
-
+        canvas_ratio = CMS.cmsDiCanvas(canv_name_ratio, x_min, x_max, y_min, y_max, 0, 2, variable[2], y_title, "Ratio", square=CMS.kSquare, extraSpace=0.05, iPos=0 )
+        legend_ratio = CMS.cmsLeg(0.68, 0.69, 0.88, 0.87, textSize=0.025, columns=1)
+        
         # Draw stack plot in the upper pad using cmsstyle
         CMS.cmsDrawStack(stack_ratio, legend_ratio, histos_dict, data=(data_histos[variable[0]] if args.data else None))
-        
+        if config_file.set_logy:
+            ROOT.gPad.SetLogy()
+            ROOT.gPad.Update()
+
         # Change to the bottom pad
         canvas_ratio.cd(2)
         
@@ -176,7 +198,7 @@ def create_plots(config_file):
         ratio_hist.Draw("EP")  
 
         # Draw a horizontal line at y=1 for reference
-        line = ROOT.TLine(variable[4], 1, variable[5], 1)
+        line = ROOT.TLine(x_min, 1, x_max, 1)
         line.SetLineStyle(2)
         line.SetLineColor(ROOT.kBlack)
         line.Draw("same")
