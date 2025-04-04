@@ -120,15 +120,20 @@ def create_fr_plot(config_file):
     # Create plots for both electrons and muons
     particles = ["electrons", "muons"]
     for particle in particles:
-        par = "e" if particle == "electrons" else "mu"
+        if particle == "electrons":
+            par = "e"
+            cut = "1.479"
+        else: 
+            par = "mu"
+            cut = "1.2"
         
         # Barrel cuts
-        barrel_cut_all = f"ZLall{par}_eta2.size() > 0 && std::abs(ZLall{par}_eta2[0]) < 1.479"
-        barrel_cut_pass = f"ZLpass{par}_eta2.size() > 0 && std::abs(ZLpass{par}_eta2[0]) < 1.479"
+        barrel_cut_all = f"ZLall{par}_eta2.size() > 0 && std::abs(ZLall{par}_eta2[0]) < {cut}"
+        barrel_cut_pass = f"ZLpass{par}_eta2.size() > 0 && std::abs(ZLpass{par}_eta2[0]) < {cut}"
         
         # Endcap cuts
-        endcap_cut_all = f"ZLall{par}_eta2.size() > 0 && std::abs(ZLall{par}_eta2[0]) >= 1.479"
-        endcap_cut_pass = f"ZLpass{par}_eta2.size() > 0 && std::abs(ZLpass{par}_eta2[0]) >= 1.479"
+        endcap_cut_all = f"ZLall{par}_eta2.size() > 0 && std::abs(ZLall{par}_eta2[0]) >= {cut}"
+        endcap_cut_pass = f"ZLpass{par}_eta2.size() > 0 && std::abs(ZLpass{par}_eta2[0]) >= {cut}"
 
         # Uncorrected fake rates
         fr_barrel = process_region(par, barrel_cut_all, barrel_cut_pass, ROOT.kBlue, "barrel")
