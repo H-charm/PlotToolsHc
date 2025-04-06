@@ -105,7 +105,7 @@ def create_fr_plot(config_file):
         fr_hist.SetLineColor(color)
         fr_hist.SetLineWidth(2)
         if corr: fr_hist.SetLineStyle(7) 
-        fr_hist.GetYaxis().SetRangeUser(0, 0.35) if particle == "e" else fr_hist.GetYaxis().SetRangeUser(0, 1)
+        fr_hist.GetYaxis().SetRangeUser(0, 0.35) # if particle == "e" else fr_hist.GetYaxis().SetRangeUser(0, 1)
         fr_hist.GetYaxis().SetTitle("Fake Rate")
         fr_hist.GetYaxis().SetTitleSize(0.05)
         fr_hist.GetYaxis().SetLabelSize(0.05)
