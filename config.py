@@ -42,30 +42,30 @@ class Config:
       # [self.ZLall_prefix + "pt2", "l_pt", "Extra lepton p_{T} [GeV]", 8, 0, 80],
       # [self.ZLalle_prefix + "pt2", "e_pt", "Extra electron p_{T} [GeV]", 8, 0, 80],
       # [self.ZLallmu_prefix + "pt2", "mu_pt", "Extra muon p_{T} [GeV]", 8, 0, 80],
-      [self.ZLall_prefix + "pt2", "l_pt", "Extra lepton p_{T} [GeV]",[0, 10, 20, 30, 40, 50, 80]],
-      [self.ZLalle_prefix + "pt2", "e_pt", "Extra electron p_{T} [GeV]",[0, 10, 20, 30, 40, 50, 80]],
-      [self.ZLallmu_prefix + "pt2", "mu_pt", "Extra muon p_{T} [GeV]",[0, 10, 20, 30, 40, 50, 80]],
+      [self.ZLall_prefix + "pt2", "l_pt", "Extra lepton p_{T} [GeV]",[0, 5, 7, 10, 20, 30, 40, 50, 80]],
+      [self.ZLalle_prefix + "pt2", "e_pt", "Extra electron p_{T} [GeV]",[0, 5, 7, 10, 20, 30, 40, 50, 80]],
+      [self.ZLallmu_prefix + "pt2", "mu_pt", "Extra muon p_{T} [GeV]",[0, 5, 7, 10, 20, 30, 40, 50, 80]],
       [self.ZLall_prefix + "eta2", "l_eta", "Extra lepton #eta [GeV]", 100, -3, 3],
       [self.ZLalle_prefix + "eta2", "e_eta", "Extra electron #eta [GeV]", 100, -3, 3],
       [self.ZLallmu_prefix + "eta2", "mu_eta", "Extra muon #eta [GeV]", 100, -3, 3],
       # [self.ZLpass_prefix + "pt2", "l_pass_pt", "Extra lepton passed p_{T} [GeV]", 8, 0, 80],
       # [self.ZLpasse_prefix + "pt2", "e_pass_pt", "Extra electron passed p_{T} [GeV]", 8, 0, 80],
       # [self.ZLpassmu_prefix + "pt2", "mu_pass_pt", "Extra muon passed p_{T} [GeV]", 8, 0, 80],
-      [self.ZLpass_prefix + "pt2", "l_pass_pt", "Extra lepton passed p_{T} [GeV]",[0, 10, 20, 30, 40, 50, 80]],
-      [self.ZLpasse_prefix + "pt2", "e_pass_pt", "Extra electron passed p_{T} [GeV]",[0, 10, 20, 30, 40, 50, 80]],
-      [self.ZLpassmu_prefix + "pt2", "mu_pass_pt", "Extra muon passed p_{T} [GeV]",[0, 10, 20, 30, 40, 50, 80]],
+      [self.ZLpass_prefix + "pt2", "l_pass_pt", "Extra lepton passed p_{T} [GeV]",[0, 5, 7, 10, 20, 30, 40, 50, 80]],
+      [self.ZLpasse_prefix + "pt2", "e_pass_pt", "Extra electron passed p_{T} [GeV]",[0, 5, 7, 10, 20, 30, 40, 50, 80]],
+      [self.ZLpassmu_prefix + "pt2", "mu_pass_pt", "Extra muon passed p_{T} [GeV]",[0, 5, 7, 10, 20, 30, 40, 50, 80]],
       [self.ZLpass_prefix + "eta2", "l_pass_eta", "Extra lepton passed #eta [GeV]", 100, -3, 3],
       [self.ZLpasse_prefix + "eta2", "e_pass_eta", "Extra electron passed #eta [GeV]", 100, -3, 3],
       [self.ZLpassmu_prefix + "eta2", "mu_pass_eta", "Extra muon passed #eta [GeV]", 100, -3, 3],
       ]
     
-    self.output_plots_dir = "plots/trees_01_04/"
-    self.base_dir = "/eos/user/n/nplastir/H+c/trees_01_04/mc/2022/merged"
+    self.output_plots_dir = "plots/trees_05_04/"
+    self.base_dir = "/eos/user/n/nplastir/H+c/trees_05_05/mc/2022EE/merged"
     self.cuts = "1" # if you don't want cuts remember to put "1"
     self.weights =  "genWeight * xsecWeight * lumiwgt * puWeight * muEffWeight * elEffWeight" #"LHEScaleWeightNorm * LHEPdfWeightNorm * PSWeightNorm"
     self.plot_format = "png"
     self.energy = "13.6"
-    self.dataset_legend = "7.98"
+    self.dataset_legend = "26.67"
     # Luminosity labels for each year
     # "2016APV": 19.52,
     # "2016": 16.81,
