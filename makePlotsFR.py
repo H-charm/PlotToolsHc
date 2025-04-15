@@ -31,8 +31,10 @@ def create_fr_plot(config_file):
     # Load and merge data
     print("Loading and merging real data...")
     data_df = merge_data_RDF()
-    variables = config_file.vars
-    variables_pass = config_file.vars_pass
+    variables_all_e = config_file.vars_all_e
+    variables_pass_e = config_file.vars_pass_e
+    variables_all_mu = config_file.vars_all_mu
+    variables_pass_mu = config_file.vars_pass_mu
     
     # Load WZ sample
     samples_dict = config_file.samples_dict
@@ -50,196 +52,271 @@ def create_fr_plot(config_file):
     CMS.SetEnergy(config_file.energy)
     CMS.ResetAdditionalInfo()
 
-    # # Get binning information from config file
-    # binning = None
-    # x_title = ""
-    # for var in config_file.vars:
-    #     if var[0] == "ZLalle_pt2":
-    #         binning = var[3]
-    #         x_title = var[2]  # Get axis title from config
-    #         break
-    
-    # if not binning:
-    #     raise ValueError("ZLalle_pt2 configuration not found in config.vars")
-    
-    # # Process data and WZ files for both barrel and endcap regions
-    # def process_region(particle, cut_all, cut_pass, color, name, corr=False):
-    #     bins_array = ROOT.std.vector("double")(binning)
-    #     # Denominator histogram
-    #     hist_data_all = data_df.Filter(cut_all)\
-    #                        .Define(f"plotvar_all{particle}", f"ZLall{particle}_pt2")\
-    #                        .Histo1D((f"hist_data_all{particle}_"+name, "", len(binning)-1, bins_array.data()), 
-    #                                   f"plotvar_all{particle}")
-    #     # Numerator histogram
-    #     hist_data_pass = data_df.Filter(cut_pass)\
-    #                         .Define(f"plotvar_pass{particle}", f"ZLpass{particle}_pt2")\
-    #                         .Histo1D((f"hist_data_pass{particle}_"+name, "", len(binning)-1, bins_array.data()), 
-    #                                    f"plotvar_pass{particle}")
-    #     # Denominator correction
-    #     hist_wz_all=wz_df.Filter(cut_all)\
-    #                      .Define(f"plotvar_all{particle}", f"ZLall{particle}_pt2")\
-    #                      .Histo1D((f"hist_wz_all{particle}_"+name, "", len(binning)-1, bins_array.data()), 
-    #                                   f"plotvar_all{particle}","final_weight")
-    #     # Numerator correction
-    #     hist_wz_pass=wz_df.Filter(cut_pass)\
-    #                       .Define(f"plotvar_pass{particle}", f"ZLall{particle}_pt2")\
-    #                       .Histo1D((f"hist_wz_pass{particle}_"+name, "", len(binning)-1, bins_array.data()), 
-    #                                   f"plotvar_pass{particle}","final_weight")
+    barrel_cut_all_e = f"ZLalle_eta2.size() > 0 && std::abs(ZLalle_eta2[0]) < 1.479"
+    endcap_cut_all_e = f"ZLalle_eta2.size() > 0 && std::abs(ZLalle_eta2[0]) >= 1.479"
 
-    #     # Add overflow
-    #     hist_data_all = utils.add_overflow(hist_data_all.GetPtr())
-    #     hist_data_pass = utils.add_overflow(hist_data_pass.GetPtr())
-    #     hist_wz_all = utils.add_overflow(hist_wz_all.GetPtr())
-    #     hist_wz_pass = utils.add_overflow(hist_wz_pass.GetPtr())
+    barrel_cut_all_mu = f"ZLallmu_eta2.size() > 0 && std::abs(ZLallmu_eta2[0]) < 1.2"
+    endcap_cut_all_mu = f"ZLallmu_eta2.size() > 0 && std::abs(ZLallmu_eta2[0]) >= 1.2"
 
-    #     if corr:
-    #         # Subtract WZ contribution
-    #         hist_data_all.Add(hist_wz_all, -1.0)
-    #         hist_data_pass.Add(hist_wz_pass, -1.0)
+    barrel_cut_pass_e = f"ZLpasse_eta2.size() > 0 && std::abs(ZLpasse_eta2[0]) < 1.479"
+    endcap_cut_pass_e = f"ZLpasse_eta2.size() > 0 && std::abs(ZLpasse_eta2[0]) >= 1.479"
 
-    #     # Create Fake Rate histogram
-    #     fr_hist = hist_data_pass.Clone("fr_hist_"+name)
-    #     fr_hist.Divide(hist_data_all)
-
-    #     # Style
-    #     fr_hist.SetMarkerStyle(20)
-    #     fr_hist.SetMarkerColor(color)
-    #     fr_hist.SetLineColor(color)
-    #     fr_hist.SetLineWidth(2)
-    #     if corr: fr_hist.SetLineStyle(7) 
-    #     fr_hist.GetYaxis().SetRangeUser(0, 0.35) # if particle == "e" else fr_hist.GetYaxis().SetRangeUser(0, 1)
-    #     fr_hist.GetYaxis().SetTitle("Fake Rate")
-    #     fr_hist.GetYaxis().SetTitleSize(0.05)
-    #     fr_hist.GetYaxis().SetLabelSize(0.05)
-    #     fr_hist.GetYaxis().SetTitleOffset(1.5)
-    #     fr_hist.GetXaxis().SetTitle("p_{T}(e) [GeV]") if particle == "e" else fr_hist.GetXaxis().SetTitle("p_{T}(#mu) [GeV]")
-    #     fr_hist.GetXaxis().SetTitleSize(0.05)
-    #     fr_hist.GetXaxis().SetLabelSize(0.05)
-    #     fr_hist.GetXaxis().SetTitleOffset(1.2)
-            
-    #     return fr_hist
-
-    # # Create plots for both electrons and muons
-    # particles = ["electrons", "muons"]
-    # for particle in particles:
-    #     if particle == "electrons":
-    #         par = "e"
-    #         cut = "1.479"
-    #     else: 
-    #         par = "mu"
-    #         cut = "1.2"
-        
-    #     # Barrel cuts
-    #     barrel_cut_all = f"ZLall{par}_eta2.size() > 0 && std::abs(ZLall{par}_eta2[0]) < {cut}"
-    #     barrel_cut_pass = f"ZLpass{par}_eta2.size() > 0 && std::abs(ZLpass{par}_eta2[0]) < {cut}"
-        
-    #     # Endcap cuts
-    #     endcap_cut_all = f"ZLall{par}_eta2.size() > 0 && std::abs(ZLall{par}_eta2[0]) >= {cut}"
-    #     endcap_cut_pass = f"ZLpass{par}_eta2.size() > 0 && std::abs(ZLpass{par}_eta2[0]) >= {cut}"
-
-    #     # Uncorrected fake rates
-    #     fr_barrel = process_region(par, barrel_cut_all, barrel_cut_pass, ROOT.kBlue, "barrel")
-    #     fr_endcap = process_region(par, endcap_cut_all, endcap_cut_pass, ROOT.kRed, "endcap")
-
-    #     # Corrected fake rates (WZ subtracted)
-    #     fr_barrel_corr = process_region(par, barrel_cut_all, barrel_cut_pass, ROOT.kBlue, "barrel_corr", corr=True)
-    #     fr_endcap_corr = process_region(par, endcap_cut_all, endcap_cut_pass, ROOT.kRed, "endcap_corr", corr=True)
-
-    #     # Create canvas
-    #     canvas = CMS.cmsCanvas(f"fr_canvas_{particle}", binning[0], binning[-1], 0, 0.35,
-    #                          x_title, "Fake Rate", square=CMS.kSquare, extraSpace=0.05)
-        
-    #     # Draw all four histograms
-    #     fr_barrel.Draw("EP")
-    #     fr_endcap.Draw("EP SAME")
-    #     fr_barrel_corr.Draw("EP SAME")
-    #     fr_endcap_corr.Draw("EP SAME")
-
-    #     # Create legend
-    #     legend = CMS.cmsLeg(0.6, 0.7, 0.9, 0.9, textSize=0.035, textFont=42)
-    #     legend.AddEntry(fr_barrel, "Barrel Uncorrected", "l")
-    #     legend.AddEntry(fr_barrel_corr, "Barrel Corrected", "l")
-    #     legend.AddEntry(fr_endcap, "Endcap Uncorrected", "l")
-    #     legend.AddEntry(fr_endcap_corr, "Endcap Corrected", "l")
-    #     legend.Draw()
-
-    #     # Draw Lumi and CMS text
-    #     CMS.CMS_lumi(canvas)
-
-    #     # Save plot
-    #     output_dir = os.path.join(config_file.output_plots_dir, "fr_plots")
-    #     os.makedirs(output_dir, exist_ok=True)
-    #     CMS.SaveCanvas(canvas, os.path.join(output_dir, f"fr_plot_{particle}_with_correction.png"))
+    barrel_cut_pass_mu = f"ZLpassmu_eta2.size() > 0 && std::abs(ZLpassmu_eta2[0]) < 1.2"
+    endcap_cut_pass_mu = f"ZLpassmu_eta2.size() > 0 && std::abs(ZLpassmu_eta2[0]) >= 1.2"
 
     # Loop for each variable
-    for variable in variables:
+    for variable in variables_all_e:
         print(f"Plotting var {variable[0]}")
-        histos_dict = {}
-
-        particles = ["electrons", "muons"]
-        for particle in particles:
-            if particle == "electrons":
-                par = "e"
-                cut = "1.479"
-            else: 
-                par = "mu"
-                cut = "1.2"
-            
-            # Barrel cuts
-            barrel_cut_all = f"ZLall{par}_eta2.size() > 0 && std::abs(ZLall{par}_eta2[0]) < {cut}"
-            endcap_cut_all = f"ZLall{par}_eta2.size() > 0 && std::abs(ZLall{par}_eta2[0]) >= {cut}"
-
+        data_histos_barrel = {}
+        data_histos_endcap = {}
 
         if isinstance(variable[3], list):  # Variable binning
-                bins_array = ROOT.std.vector("double")(variable[3])
-                data_hist = data_df.Filter(config_file.cuts).Define("plotvar_", variable[0]).Histo1D(
-                    (f"hist_data_{variable[0]}", "", len(variable[3]) - 1, bins_array.data()), 
-                    "plotvar_"
-                )
-            else:  # Uniform binning
-                data_hist = data_df.Filter(config_file.cuts).Define("plotvar_", variable[0]).Histo1D(
-                    (f"hist_data_{variable[0]}", "", variable[3], variable[4], variable[5]), 
-                    "plotvar_"
-                )
+            bins_array = ROOT.std.vector("double")(variable[3])
+            data_hist_barrel = data_df.Filter(barrel_cut_all_e).Define("plotvar_", variable[0]).Histo1D(
+                (f"hist_data_{variable[0]}", "", len(variable[3]) - 1, bins_array.data()), 
+                "plotvar_"
+            )
+        else:  # Uniform binning
+            data_hist_barrel = data_df.Filter(barrel_cut_all_e).Define("plotvar_", variable[0]).Histo1D(
+                (f"hist_data_{variable[0]}", "", variable[3], variable[4], variable[5]), 
+                "plotvar_"
+            )
 
-        data_hist = utils.add_overflow(data_hist)
-        data_histos[variable[0]] = data_hist.GetPtr()
+        if isinstance(variable[3], list):  # Variable binning
+            bins_array = ROOT.std.vector("double")(variable[3])
+            data_hist_endcap = data_df.Filter(endcap_cut_all_e).Define("plotvar_", variable[0]).Histo1D(
+                (f"hist_data_{variable[0]}", "", len(variable[3]) - 1, bins_array.data()), 
+                "plotvar_"
+            )
+        else:  # Uniform binning
+            data_hist_endcap = data_df.Filter(endcap_cut_all_e).Define("plotvar_", variable[0]).Histo1D(
+                (f"hist_data_{variable[0]}", "", variable[3], variable[4], variable[5]), 
+                "plotvar_"
+            )
 
-    # Loop for each variable
-    for variable in variables_pass:
-        print(f"Plotting var {variable[0]}")
-        histos_dict = {}
+        data_hist_barrel = utils.add_overflow(data_hist_barrel)
+        data_histos_barrel[variable[0]] = data_hist_barrel.GetPtr()
 
-        particles = ["electrons", "muons"]
-        for particle in particles:
-            if particle == "electrons":
-                par = "e"
-                cut = "1.479"
-            else: 
-                par = "mu"
-                cut = "1.2"
-            
-            # Barrel cuts
-            barrel_cut_pass = f"ZLpass{par}_eta2.size() > 0 && std::abs(ZLpass{par}_eta2[0]) < {cut}"
-            endcap_cut_pass = f"ZLpass{par}_eta2.size() > 0 && std::abs(ZLpass{par}_eta2[0]) >= {cut}"
+        data_hist_endcap = utils.add_overflow(data_hist_endcap)
+        data_histos_endcap[variable[0]] = data_hist_endcap.GetPtr()
 
-            if isinstance(variable[3], list):  # Variable binning
-                bins_array = ROOT.std.vector("double")(variable[3])
-                data_hist = data_df.Filter(config_file.cuts).Define("plotvar_", variable[0]).Histo1D(
-                    (f"hist_data_{variable[0]}", "", len(variable[3]) - 1, bins_array.data()), 
-                    "plotvar_"
-                )
-            else:  # Uniform binning
-                data_hist = data_df.Filter(config_file.cuts).Define("plotvar_", variable[0]).Histo1D(
-                    (f"hist_data_{variable[0]}", "", variable[3], variable[4], variable[5]), 
-                    "plotvar_"
-                )
+        data_hist_barrel.SetMarkerStyle(20)
+        data_hist_barrel.SetMarkerColor(ROOT.kBlue)
+        data_hist_barrel.SetLineColor(ROOT.kBlue)
+        data_hist_barrel.SetLineWidth(2)
 
-            data_hist = utils.add_overflow(data_hist)
-            data_histos[variable[0]] = data_hist.GetPtr()
+        canv_name_barrel = f"{variable[1]}_canvas_barrel"
+        canv_name_endcap = f"{variable[1]}_canvas_endcap"
+        y_title = "Events"
+        if isinstance(variable[3], list):  # Variable binning
+            x_min, x_max = variable[3][0], variable[3][-1]  # Use first and last bin edge
+        else:  # Uniform binning
+            x_min, x_max = variable[4], variable[5]  # Use configured range
+        canvas_barrel = CMS.cmsCanvas(canv_name_barrel, x_min, x_max, 0, 10000, variable[2], y_title, square=CMS.kSquare, extraSpace=0.05, iPos=0)
         
-        
-        
+        data_hist_barrel.Draw()
+
+        output_dir = os.path.join(config_file.output_plots_dir, "debug_plots")
+        os.makedirs(output_dir, exist_ok=True)
+        CMS.SaveCanvas(canvas_barrel, os.path.join(output_dir, f"All_electrons_barrel_{variable[1]}.png"))
+
+        canvas_endcap = CMS.cmsCanvas(canv_name_endcap, x_min, x_max, 0, 10000, variable[2], y_title, square=CMS.kSquare, extraSpace=0.05, iPos=0)
+
+        data_hist_endcap.SetMarkerStyle(20)
+        data_hist_endcap.SetMarkerColor(ROOT.kRed)
+        data_hist_endcap.SetLineColor(ROOT.kRed)
+        data_hist_endcap.SetLineWidth(2)
+
+        data_hist_endcap.Draw()
+
+        output_dir = os.path.join(config_file.output_plots_dir, "debug_plots")
+        os.makedirs(output_dir, exist_ok=True)
+        CMS.SaveCanvas(canvas_endcap, os.path.join(output_dir, f"All_electrons_endcap_{variable[1]}.png"))
+
+    # PASSED ELECTRONS
+    for variable in variables_pass_e:
+        print(f"Plotting var {variable[0]} (passed electrons)")
+        data_histos_barrel = {}
+        data_histos_endcap = {}
+
+        if isinstance(variable[3], list):
+            bins_array = ROOT.std.vector("double")(variable[3])
+            data_hist_barrel = data_df.Filter(barrel_cut_pass_e).Define("plotvar_", variable[0]).Histo1D(
+                (f"hist_data_pass_{variable[0]}", "", len(variable[3]) - 1, bins_array.data()), 
+                "plotvar_"
+            )
+        else:
+            data_hist_barrel = data_df.Filter(barrel_cut_pass_e).Define("plotvar_", variable[0]).Histo1D(
+                (f"hist_data_pass_{variable[0]}", "", variable[3], variable[4], variable[5]), 
+                "plotvar_"
+            )
+
+        if isinstance(variable[3], list):
+            bins_array = ROOT.std.vector("double")(variable[3])
+            data_hist_endcap = data_df.Filter(endcap_cut_pass_e).Define("plotvar_", variable[0]).Histo1D(
+                (f"hist_data_pass_{variable[0]}", "", len(variable[3]) - 1, bins_array.data()), 
+                "plotvar_"
+            )
+        else:
+            data_hist_endcap = data_df.Filter(endcap_cut_pass_e).Define("plotvar_", variable[0]).Histo1D(
+                (f"hist_data_pass_{variable[0]}", "", variable[3], variable[4], variable[5]), 
+                "plotvar_"
+            )
+
+        data_hist_barrel = utils.add_overflow(data_hist_barrel)
+        data_histos_barrel[variable[0]] = data_hist_barrel.GetPtr()
+
+        data_hist_endcap = utils.add_overflow(data_hist_endcap)
+        data_histos_endcap[variable[0]] = data_hist_endcap.GetPtr()
+
+        data_hist_barrel.SetMarkerStyle(21)
+        data_hist_barrel.SetMarkerColor(ROOT.kGreen + 2)
+        data_hist_barrel.SetLineColor(ROOT.kGreen + 2)
+        data_hist_barrel.SetLineWidth(2)
+
+        canv_name_barrel = f"{variable[1]}_canvas_barrel_pass"
+        canv_name_endcap = f"{variable[1]}_canvas_endcap_pass"
+        y_title = "Events"
+        if isinstance(variable[3], list):
+            x_min, x_max = variable[3][0], variable[3][-1]
+        else:
+            x_min, x_max = variable[4], variable[5]
+
+        canvas_barrel = CMS.cmsCanvas(canv_name_barrel, x_min, x_max, 0, 10000, variable[2], y_title, square=CMS.kSquare, extraSpace=0.05, iPos=0)
+        data_hist_barrel.Draw()
+        CMS.SaveCanvas(canvas_barrel, os.path.join(output_dir, f"Passed_electrons_barrel_{variable[1]}.png"))
+
+        canvas_endcap = CMS.cmsCanvas(canv_name_endcap, x_min, x_max, 0, 10000, variable[2], y_title, square=CMS.kSquare, extraSpace=0.05, iPos=0)
+        data_hist_endcap.SetMarkerStyle(21)
+        data_hist_endcap.SetMarkerColor(ROOT.kMagenta + 1)
+        data_hist_endcap.SetLineColor(ROOT.kMagenta + 1)
+        data_hist_endcap.SetLineWidth(2)
+        data_hist_endcap.Draw()
+        CMS.SaveCanvas(canvas_endcap, os.path.join(output_dir, f"Passed_electrons_endcap_{variable[1]}.png"))
+
+    # ALL MUONS
+    for variable in variables_all_mu:
+        print(f"Plotting var {variable[0]} (all muons)")
+        data_histos_barrel = {}
+        data_histos_endcap = {}
+
+        if isinstance(variable[3], list):
+            bins_array = ROOT.std.vector("double")(variable[3])
+            data_hist_barrel = data_df.Filter(barrel_cut_all_mu).Define("plotvar_", variable[0]).Histo1D(
+                (f"hist_data_allmu_{variable[0]}", "", len(variable[3]) - 1, bins_array.data()), 
+                "plotvar_"
+            )
+        else:
+            data_hist_barrel = data_df.Filter(barrel_cut_all_mu).Define("plotvar_", variable[0]).Histo1D(
+                (f"hist_data_allmu_{variable[0]}", "", variable[3], variable[4], variable[5]), 
+                "plotvar_"
+            )
+
+        if isinstance(variable[3], list):
+            bins_array = ROOT.std.vector("double")(variable[3])
+            data_hist_endcap = data_df.Filter(endcap_cut_all_mu).Define("plotvar_", variable[0]).Histo1D(
+                (f"hist_data_allmu_{variable[0]}", "", len(variable[3]) - 1, bins_array.data()), 
+                "plotvar_"
+            )
+        else:
+            data_hist_endcap = data_df.Filter(endcap_cut_all_mu).Define("plotvar_", variable[0]).Histo1D(
+                (f"hist_data_allmu_{variable[0]}", "", variable[3], variable[4], variable[5]), 
+                "plotvar_"
+            )
+
+        data_hist_barrel = utils.add_overflow(data_hist_barrel)
+        data_histos_barrel[variable[0]] = data_hist_barrel.GetPtr()
+
+        data_hist_endcap = utils.add_overflow(data_hist_endcap)
+        data_histos_endcap[variable[0]] = data_hist_endcap.GetPtr()
+
+        data_hist_barrel.SetMarkerStyle(22)
+        data_hist_barrel.SetMarkerColor(ROOT.kOrange + 7)
+        data_hist_barrel.SetLineColor(ROOT.kOrange + 7)
+        data_hist_barrel.SetLineWidth(2)
+
+        canv_name_barrel = f"{variable[1]}_canvas_barrel_allmu"
+        canv_name_endcap = f"{variable[1]}_canvas_endcap_allmu"
+        y_title = "Events"
+        if isinstance(variable[3], list):
+            x_min, x_max = variable[3][0], variable[3][-1]
+        else:
+            x_min, x_max = variable[4], variable[5]
+
+        canvas_barrel = CMS.cmsCanvas(canv_name_barrel, x_min, x_max, 0, 10000, variable[2], y_title, square=CMS.kSquare, extraSpace=0.05, iPos=0)
+        data_hist_barrel.Draw()
+        CMS.SaveCanvas(canvas_barrel, os.path.join(output_dir, f"All_muons_barrel_{variable[1]}.png"))
+
+        canvas_endcap = CMS.cmsCanvas(canv_name_endcap, x_min, x_max, 0, 10000, variable[2], y_title, square=CMS.kSquare, extraSpace=0.05, iPos=0)
+        data_hist_endcap.SetMarkerStyle(22)
+        data_hist_endcap.SetMarkerColor(ROOT.kCyan + 1)
+        data_hist_endcap.SetLineColor(ROOT.kCyan + 1)
+        data_hist_endcap.SetLineWidth(2)
+        data_hist_endcap.Draw()
+        CMS.SaveCanvas(canvas_endcap, os.path.join(output_dir, f"All_muons_endcap_{variable[1]}.png"))
+
+    # PASSED MUONS
+    for variable in variables_pass_mu:
+        print(f"Plotting var {variable[0]} (passed muons)")
+        data_histos_barrel = {}
+        data_histos_endcap = {}
+
+        if isinstance(variable[3], list):
+            bins_array = ROOT.std.vector("double")(variable[3])
+            data_hist_barrel = data_df.Filter(barrel_cut_pass_mu).Define("plotvar_", variable[0]).Histo1D(
+                (f"hist_data_passmu_{variable[0]}", "", len(variable[3]) - 1, bins_array.data()), 
+                "plotvar_"
+            )
+        else:
+            data_hist_barrel = data_df.Filter(barrel_cut_pass_mu).Define("plotvar_", variable[0]).Histo1D(
+                (f"hist_data_passmu_{variable[0]}", "", variable[3], variable[4], variable[5]), 
+                "plotvar_"
+            )
+
+        if isinstance(variable[3], list):
+            bins_array = ROOT.std.vector("double")(variable[3])
+            data_hist_endcap = data_df.Filter(endcap_cut_pass_mu).Define("plotvar_", variable[0]).Histo1D(
+                (f"hist_data_passmu_{variable[0]}", "", len(variable[3]) - 1, bins_array.data()), 
+                "plotvar_"
+            )
+        else:
+            data_hist_endcap = data_df.Filter(endcap_cut_pass_mu).Define("plotvar_", variable[0]).Histo1D(
+                (f"hist_data_passmu_{variable[0]}", "", variable[3], variable[4], variable[5]), 
+                "plotvar_"
+            )
+
+        data_hist_barrel = utils.add_overflow(data_hist_barrel)
+        data_histos_barrel[variable[0]] = data_hist_barrel.GetPtr()
+
+        data_hist_endcap = utils.add_overflow(data_hist_endcap)
+        data_histos_endcap[variable[0]] = data_hist_endcap.GetPtr()
+
+        data_hist_barrel.SetMarkerStyle(23)
+        data_hist_barrel.SetMarkerColor(ROOT.kViolet - 5)
+        data_hist_barrel.SetLineColor(ROOT.kViolet - 5)
+        data_hist_barrel.SetLineWidth(2)
+
+        canv_name_barrel = f"{variable[1]}_canvas_barrel_passmu"
+        canv_name_endcap = f"{variable[1]}_canvas_endcap_passmu"
+        y_title = "Events"
+        if isinstance(variable[3], list):
+            x_min, x_max = variable[3][0], variable[3][-1]
+        else:
+            x_min, x_max = variable[4], variable[5]
+
+        canvas_barrel = CMS.cmsCanvas(canv_name_barrel, x_min, x_max, 0, 10000, variable[2], y_title, square=CMS.kSquare, extraSpace=0.05, iPos=0)
+        data_hist_barrel.Draw()
+        CMS.SaveCanvas(canvas_barrel, os.path.join(output_dir, f"Passed_muons_barrel_{variable[1]}.png"))
+
+        canvas_endcap = CMS.cmsCanvas(canv_name_endcap, x_min, x_max, 0, 10000, variable[2], y_title, square=CMS.kSquare, extraSpace=0.05, iPos=0)
+        data_hist_endcap.SetMarkerStyle(23)
+        data_hist_endcap.SetMarkerColor(ROOT.kAzure + 1)
+        data_hist_endcap.SetLineColor(ROOT.kAzure + 1)
+        data_hist_endcap.SetLineWidth(2)
+        data_hist_endcap.Draw()
+        CMS.SaveCanvas(canvas_endcap, os.path.join(output_dir, f"Passed_muons_endcap_{variable[1]}.png"))
+
+
 if __name__ == "__main__":
     start_time = time.time()
     

@@ -36,64 +36,71 @@ class Config:
     self.ZLpassmu_prefix = "ZLpassmu_"
       
     ## [branch name, plot name, x-axis label, nbins, xlow, xhigh]
-    self.vars = [
+
+    self.vars_all_e = [
+      [self.ZLalle_prefix + "pt2", "e_pt", "Extra electron p_{T} [GeV]",[0, 5, 7, 10, 20, 30, 40, 50, 80]],
+
+      [self.ZLalle_prefix + "eta2", "e_eta", "Extra electron #eta [GeV]", 100, -3, 3],
+
+      [self.ZLalle_prefix + "sip3d", "e_sip3d", "Extra electron sip3d", 100, -3, 3],
+
+      [self.ZLalle_prefix + "dz", "e_dz", "Extra electron dz", 100, -3, 3],
+
+      [self.ZLalle_prefix + "dxy", "e_dxy", "Extra electron dxy", 100, -3, 3],
+
+      [self.ZLalle_prefix + "iso", "e_iso", "Extra electron isolation", 100, -3, 3],
+
+      [self.ZLalle_prefix + "pfcand", "e_pfcand", "Extra electron pfcand", 100, -3, 3],
+
+    ]
+
+    self.vars_all_mu = [
       # [self.el_prefix + "pt","el_pt","Electron p_{T} [GeV]", 100, 0, 200],
       # [self.mu_prefix + "pt","mu_pt","Muon p_{T} [GeV]", 100, 0, 200],
-      [self.ZLall_prefix + "pt2", "l_pt", "Extra lepton p_{T} [GeV]",[0, 5, 7, 10, 20, 30, 40, 50, 80]],
-      [self.ZLalle_prefix + "pt2", "e_pt", "Extra electron p_{T} [GeV]",[0, 5, 7, 10, 20, 30, 40, 50, 80]],
       [self.ZLallmu_prefix + "pt2", "mu_pt", "Extra muon p_{T} [GeV]",[0, 5, 7, 10, 20, 30, 40, 50, 80]],
       
-      [self.ZLall_prefix + "eta2", "l_eta", "Extra lepton #eta [GeV]", 100, -3, 3],
-      [self.ZLalle_prefix + "eta2", "e_eta", "Extra electron #eta [GeV]", 100, -3, 3],
       [self.ZLallmu_prefix + "eta2", "mu_eta", "Extra muon #eta [GeV]", 100, -3, 3],
 
-      [self.ZLall_prefix + "sip3d", "l_sip3d", "Extra lepton sip3d", 100, -3, 3],
-      [self.ZLalle_prefix + "sip3d", "e_sip3d", "Extra electron sip3d", 100, -3, 3],
       [self.ZLallmu_prefix + "sip3d", "mu_sip3d", "Extra muon sip3d", 100, -3, 3],
 
-      [self.ZLall_prefix + "dz", "l_dz", "Extra lepton dz", 100, -3, 3],
-      [self.ZLalle_prefix + "dz", "e_dz", "Extra electron dz", 100, -3, 3],
       [self.ZLallmu_prefix + "dz", "mu_dz", "Extra muon dz", 100, -3, 3],
 
-      [self.ZLall_prefix + "dxy", "l_dxy", "Extra lepton dxy", 100, -3, 3],
-      [self.ZLalle_prefix + "dxy", "e_dxy", "Extra electron dxy", 100, -3, 3],
       [self.ZLallmu_prefix + "dxy", "mu_dxy", "Extra muon dxy", 100, -3, 3],
 
-      [self.ZLall_prefix + "iso", "l_iso", "Extra lepton isolation", 100, -3, 3],
-      [self.ZLalle_prefix + "iso", "e_iso", "Extra electron isolation", 100, -3, 3],
       [self.ZLallmu_prefix + "iso", "mu_iso", "Extra muon isolation", 100, -3, 3],
 
-      [self.ZLall_prefix + "pfcand", "l_pfcand", "Extra lepton pfcand", 100, -3, 3],
-      [self.ZLalle_prefix + "pfcand", "e_pfcand", "Extra electron pfcand", 100, -3, 3],
       [self.ZLallmu_prefix + "pfcand", "mu_pfcand", "Extra muon pfcand", 100, -3, 3],
-      ]
-    self.vars_pass = [
-      [self.ZLpass_prefix + "pt2", "l_pass_pt", "Extra lepton passed p_{T} [GeV]",[0, 5, 7, 10, 20, 30, 40, 50, 80]],
+    ]
+
+    self.vars_pass_e = [
       [self.ZLpasse_prefix + "pt2", "e_pass_pt", "Extra electron passed p_{T} [GeV]",[0, 5, 7, 10, 20, 30, 40, 50, 80]],
+      
+      [self.ZLpasse_prefix + "eta2", "e_pass_eta", "Extra electron passed #eta [GeV]", 100, -3, 3],
+
+      [self.ZLpasse_prefix + "sip3d", "e_pass_sip3d", "Extra electron passed sip3d", 100, -3, 3],
+
+      [self.ZLpasse_prefix + "dz", "e_pass_dz", "Extra electron passed dz", 100, -3, 3],
+      
+      [self.ZLpasse_prefix + "dxy", "e_pass_dxy", "Extra electron passed dxy", 100, -3, 3],
+
+      [self.ZLpasse_prefix + "iso", "e_pass_iso", "Extra electron passed isolation", 100, -3, 3],
+
+      [self.ZLpasse_prefix + "pfcand", "e_pass_pfcand", "Extra electron passed pfcand", 100, -3, 3],
+    ]
+  
+    self.vars_pass_mu = [
       [self.ZLpassmu_prefix + "pt2", "mu_pass_pt", "Extra muon passed p_{T} [GeV]",[0, 5, 7, 10, 20, 30, 40, 50, 80]],
       
-      [self.ZLpass_prefix + "eta2", "l_pass_eta", "Extra lepton passed #eta [GeV]", 100, -3, 3],
-      [self.ZLpasse_prefix + "eta2", "e_pass_eta", "Extra electron passed #eta [GeV]", 100, -3, 3],
       [self.ZLpassmu_prefix + "eta2", "mu_pass_eta", "Extra muon passed #eta [GeV]", 100, -3, 3],
 
-      [self.ZLpass_prefix + "sip3d", "l_pass_sip3d", "Extra lepton passed sip3d", 100, -3, 3],
-      [self.ZLpasse_prefix + "sip3d", "e_pass_sip3d", "Extra electron passed sip3d", 100, -3, 3],
       [self.ZLpassmu_prefix + "sip3d", "mu_pass_sip3d", "Extra muon passed sip3d", 100, -3, 3],
 
-      [self.ZLpass_prefix + "dz", "l_pass_dz", "Extra lepton passed dz", 100, -3, 3],
-      [self.ZLpasse_prefix + "dz", "e_pass_dz", "Extra electron passed dz", 100, -3, 3],
       [self.ZLpassmu_prefix + "dz", "mu_pass_dz", "Extra muon passed dz", 100, -3, 3],
       
-      [self.ZLpass_prefix + "dxy", "l_pass_dxy", "Extra lepton passed dxy", 100, -3, 3],
-      [self.ZLpasse_prefix + "dxy", "e_pass_dxy", "Extra electron passed dxy", 100, -3, 3],
       [self.ZLpassmu_prefix + "dxy", "mu_pass_dxy", "Extra muon passed dxy", 100, -3, 3],
-
-      [self.ZLpass_prefix + "iso", "l_pass_iso", "Extra lepton passed isolation", 100, -3, 3],
-      [self.ZLpasse_prefix + "iso", "e_pass_iso", "Extra electron passed isolation", 100, -3, 3],
+      
       [self.ZLpassmu_prefix + "iso", "mu_pass_iso", "Extra muon passed isolation", 100, -3, 3],
 
-      [self.ZLpass_prefix + "pfcand", "l_pass_pfcand", "Extra lepton passed pfcand", 100, -3, 3],
-      [self.ZLpasse_prefix + "pfcand", "e_pass_pfcand", "Extra electron passed pfcand", 100, -3, 3],
       [self.ZLpassmu_prefix + "pfcand", "mu_pass_pfcand", "Extra muon passed pfcand", 100, -3, 3],
       
     ]
