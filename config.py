@@ -42,15 +42,15 @@ class Config:
 
       [self.ZLalle_prefix + "eta2", "e_eta", "Extra electron #eta [GeV]", 100, -3, 3],
 
-      [self.ZLalle_prefix + "sip3d", "e_sip3d", "Extra electron sip3d", 100, -3, 3],
+      [self.ZLalle_prefix + "sip3d", "e_sip3d", "Extra electron sip3d", 100, 0, 4],
 
-      [self.ZLalle_prefix + "dz", "e_dz", "Extra electron dz", 100, -3, 3],
+      [self.ZLalle_prefix + "dz", "e_dz", "Extra electron dz", 100, -1, 1],
 
-      [self.ZLalle_prefix + "dxy", "e_dxy", "Extra electron dxy", 100, -3, 3],
+      [self.ZLalle_prefix + "dxy", "e_dxy", "Extra electron dxy", 100, -1, 1],
 
-      [self.ZLalle_prefix + "iso", "e_iso", "Extra electron isolation", 100, -3, 3],
+      [self.ZLalle_prefix + "iso", "e_iso", "Extra electron isolation", 100, 0, 0.35],
 
-      [self.ZLalle_prefix + "pfcand", "e_pfcand", "Extra electron pfcand", 100, -3, 3],
+      # [self.ZLalle_prefix + "pfcand", "e_pfcand", "Extra electron pfcand", 100, -3, 3],
 
     ]
 
@@ -61,15 +61,15 @@ class Config:
       
       [self.ZLallmu_prefix + "eta2", "mu_eta", "Extra muon #eta [GeV]", 100, -3, 3],
 
-      [self.ZLallmu_prefix + "sip3d", "mu_sip3d", "Extra muon sip3d", 100, -3, 3],
+      [self.ZLallmu_prefix + "sip3d", "mu_sip3d", "Extra muon sip3d", 100, 0, 4],
 
-      [self.ZLallmu_prefix + "dz", "mu_dz", "Extra muon dz", 100, -3, 3],
+      [self.ZLallmu_prefix + "dz", "mu_dz", "Extra muon dz", 100, -1, 1],
 
-      [self.ZLallmu_prefix + "dxy", "mu_dxy", "Extra muon dxy", 100, -3, 3],
+      [self.ZLallmu_prefix + "dxy", "mu_dxy", "Extra muon dxy", 100, -1, 1],
 
-      [self.ZLallmu_prefix + "iso", "mu_iso", "Extra muon isolation", 100, -3, 3],
+      [self.ZLallmu_prefix + "iso", "mu_iso", "Extra muon isolation", 100, 0, 0.35],
 
-      [self.ZLallmu_prefix + "pfcand", "mu_pfcand", "Extra muon pfcand", 100, -3, 3],
+      # [self.ZLallmu_prefix + "pfcand", "mu_pfcand", "Extra muon pfcand", 100, -3, 3],
     ]
 
     self.vars_pass_e = [
@@ -77,15 +77,15 @@ class Config:
       
       [self.ZLpasse_prefix + "eta2", "e_pass_eta", "Extra electron passed #eta [GeV]", 100, -3, 3],
 
-      [self.ZLpasse_prefix + "sip3d", "e_pass_sip3d", "Extra electron passed sip3d", 100, -3, 3],
+      [self.ZLpasse_prefix + "sip3d", "e_pass_sip3d", "Extra electron passed sip3d", 100, 0, 4],
 
-      [self.ZLpasse_prefix + "dz", "e_pass_dz", "Extra electron passed dz", 100, -3, 3],
+      [self.ZLpasse_prefix + "dz", "e_pass_dz", "Extra electron passed dz", 100, -1, 1],
       
-      [self.ZLpasse_prefix + "dxy", "e_pass_dxy", "Extra electron passed dxy", 100, -3, 3],
+      [self.ZLpasse_prefix + "dxy", "e_pass_dxy", "Extra electron passed dxy", 100, -1, 1],
 
-      [self.ZLpasse_prefix + "iso", "e_pass_iso", "Extra electron passed isolation", 100, -3, 3],
+      [self.ZLpasse_prefix + "iso", "e_pass_iso", "Extra electron passed isolation", 100, 0, 0.35],
 
-      [self.ZLpasse_prefix + "pfcand", "e_pass_pfcand", "Extra electron passed pfcand", 100, -3, 3],
+      # [self.ZLpasse_prefix + "pfcand", "e_pass_pfcand", "Extra electron passed pfcand", 100, -3, 3],
     ]
   
     self.vars_pass_mu = [
@@ -93,20 +93,20 @@ class Config:
       
       [self.ZLpassmu_prefix + "eta2", "mu_pass_eta", "Extra muon passed #eta [GeV]", 100, -3, 3],
 
-      [self.ZLpassmu_prefix + "sip3d", "mu_pass_sip3d", "Extra muon passed sip3d", 100, -3, 3],
+      [self.ZLpassmu_prefix + "sip3d", "mu_pass_sip3d", "Extra muon passed sip3d", 100, 0, 4],
 
-      [self.ZLpassmu_prefix + "dz", "mu_pass_dz", "Extra muon passed dz", 100, -3, 3],
+      [self.ZLpassmu_prefix + "dz", "mu_pass_dz", "Extra muon passed dz", 100, -1, 1],
       
-      [self.ZLpassmu_prefix + "dxy", "mu_pass_dxy", "Extra muon passed dxy", 100, -3, 3],
+      [self.ZLpassmu_prefix + "dxy", "mu_pass_dxy", "Extra muon passed dxy", 100, -1, 1],
       
-      [self.ZLpassmu_prefix + "iso", "mu_pass_iso", "Extra muon passed isolation", 100, -3, 3],
+      [self.ZLpassmu_prefix + "iso", "mu_pass_iso", "Extra muon passed isolation", 100, 0, 0.35],
 
-      [self.ZLpassmu_prefix + "pfcand", "mu_pass_pfcand", "Extra muon passed pfcand", 100, -3, 3],
+      # [self.ZLpassmu_prefix + "pfcand", "mu_pass_pfcand", "Extra muon passed pfcand", 100, -3, 3],
       
     ]
     
-    self.output_plots_dir = "plots/trees_05_04/"
-    self.base_dir = "/eos/user/n/nplastir/H+c/trees_05_05/mc/2022EE/merged"
+    self.output_plots_dir = "plots/trees_15_04_debug/"
+    self.base_dir = "/eos/user/p/pkatris/Trees_Rare_Bkgs_14_04_2025/mc/2022/merged/"
     self.cuts = "1" # if you don't want cuts remember to put "1"
     self.weights =  "genWeight * xsecWeight * lumiwgt * puWeight * muEffWeight * elEffWeight" #"LHEScaleWeightNorm * LHEPdfWeightNorm * PSWeightNorm"
     self.plot_format = "png"
