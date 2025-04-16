@@ -6,6 +6,8 @@ import time
 import utils
 import cmsstyle as CMS
 
+CMS_color_0 = ROOT.TColor.GetColor(87, 144, 252)
+
 ROOT.ROOT.EnableImplicitMT()
 ROOT.gInterpreter.ProcessLine('#include "cpp_functions.C"')
 ROOT.gROOT.SetBatch(True)
@@ -13,14 +15,6 @@ ROOT.gROOT.SetBatch(True)
 parser = argparse.ArgumentParser()
 parser.add_argument('-d', '--data', type=str, help='Path to data files directory', required=True)
 args = parser.parse_args()
-
-DATA_FILES = [
-    "DoubleMuon_merged.root",
-    "SingleMuon_merged.root",
-    "EGamma_merged.root",
-    "MuonEG_merged.root",
-    "Muon_merged.root"
-]
 
 def merge_data_RDF():
     """Create a single RDataFrame from multiple ROOT data files."""
@@ -52,13 +46,13 @@ def create_fr_plot(config_file):
     binning = None
     x_title = ""
     for var in config_file.vars:
-        if var[0] == "ZLalle_pt2":
+        if var[0] == "ZLallmu_pt2":
             binning = var[3]
             x_title = var[2]  # Get axis title from config
             break
     
     if not binning:
-        raise ValueError("ZLalle_pt2 configuration not found in config.vars")
+        raise ValueError("ZLallmu_pt2 configuration not found in config.vars")
     
     # Process data and WZ files for both barrel and endcap regions
     def process_region(particle, cut_all, cut_pass, color, name, corr=False):
@@ -107,9 +101,9 @@ def create_fr_plot(config_file):
         if corr: fr_hist.SetLineStyle(7) 
         fr_hist.GetYaxis().SetRangeUser(0, 0.35) # if particle == "e" else fr_hist.GetYaxis().SetRangeUser(0, 1)
         fr_hist.GetYaxis().SetTitle("Fake Rate")
-        fr_hist.GetYaxis().SetTitleSize(0.05)
+        fr_hist.GetYaxis().SetTitleSize(0.055)
         fr_hist.GetYaxis().SetLabelSize(0.05)
-        fr_hist.GetYaxis().SetTitleOffset(1.5)
+        fr_hist.GetYaxis().SetTitleOffset(1.6)
         fr_hist.GetXaxis().SetTitle("p_{T}(e) [GeV]") if particle == "e" else fr_hist.GetXaxis().SetTitle("p_{T}(#mu) [GeV]")
         fr_hist.GetXaxis().SetTitleSize(0.05)
         fr_hist.GetXaxis().SetLabelSize(0.05)
@@ -136,11 +130,11 @@ def create_fr_plot(config_file):
         endcap_cut_pass = f"ZLpass{par}_eta2.size() > 0 && std::abs(ZLpass{par}_eta2[0]) >= {cut}"
 
         # Uncorrected fake rates
-        fr_barrel = process_region(par, barrel_cut_all, barrel_cut_pass, ROOT.kBlue, "barrel")
+        fr_barrel = process_region(par, barrel_cut_all, barrel_cut_pass, CMS_color_0, "barrel")
         fr_endcap = process_region(par, endcap_cut_all, endcap_cut_pass, ROOT.kRed, "endcap")
 
         # Corrected fake rates (WZ subtracted)
-        fr_barrel_corr = process_region(par, barrel_cut_all, barrel_cut_pass, ROOT.kBlue, "barrel_corr", corr=True)
+        fr_barrel_corr = process_region(par, barrel_cut_all, barrel_cut_pass, CMS_color_0, "barrel_corr", corr=True)
         fr_endcap_corr = process_region(par, endcap_cut_all, endcap_cut_pass, ROOT.kRed, "endcap_corr", corr=True)
 
         # Create canvas
@@ -167,13 +161,24 @@ def create_fr_plot(config_file):
         # Save plot
         output_dir = os.path.join(config_file.output_plots_dir, "fr_plots")
         os.makedirs(output_dir, exist_ok=True)
-        CMS.SaveCanvas(canvas, os.path.join(output_dir, f"fr_plot_{particle}_with_correction.png"))
+        CMS.SaveCanvas(canvas, os.path.join(output_dir, f"fr_{particle}."+ config_file.plot_format))
 
 if __name__ == "__main__":
     start_time = time.time()
     
     config_file = config.Config()
     config_file.add_sample(name="WZ", root_file="WZ_final_merged.root",cuts=1)
+    path_parts = os.path.normpath(config_file.base_dir).split(os.sep)
+    DATA_FILES = [
+        "EGamma_merged.root",
+        "MuonEG_merged.root",
+        "Muon_merged.root"
+    ]
+    if "2022" in path_parts:
+        DATA_FILES += [
+            "DoubleMuon_merged.root",
+            "SingleMuon_merged.root"
+        ]
     create_fr_plot(config_file)
     
     end_time = time.time()

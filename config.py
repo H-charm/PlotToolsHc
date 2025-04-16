@@ -1,5 +1,6 @@
 import ROOT
 from array import array
+import os
 
 ROOT.gStyle.SetLegendBorderSize(0)
 ROOT.gStyle.SetPadLeftMargin(0.15) 
@@ -27,7 +28,6 @@ class Config:
     self.ZZ4e_prefix="ZZ4e_"
     self.ZZ4mu_prefix="ZZ4mu_"
     self.ZZ2e2mu_prefix="ZZ2e2mu_"
-
     self.ZLall_prefix = "ZLall_"
     self.ZLalle_prefix = "ZLalle_"
     self.ZLallmu_prefix = "ZLallmu_"
@@ -37,44 +37,26 @@ class Config:
       
     ## [branch name, plot name, x-axis label, nbins, xlow, xhigh]
     self.vars = [
-      # [self.el_prefix + "pt","el_pt","Electron p_{T} [GeV]", 100, 0, 200],
-      # [self.mu_prefix + "pt","mu_pt","Muon p_{T} [GeV]", 100, 0, 200],
-      # [self.ZLall_prefix + "pt2", "l_pt", "Extra lepton p_{T} [GeV]", 8, 0, 80],
-      # [self.ZLalle_prefix + "pt2", "e_pt", "Extra electron p_{T} [GeV]", 8, 0, 80],
-      # [self.ZLallmu_prefix + "pt2", "mu_pt", "Extra muon p_{T} [GeV]", 8, 0, 80],
-      [self.ZLall_prefix + "pt2", "l_pt", "Extra lepton p_{T} [GeV]",[0, 5, 7, 10, 20, 30, 40, 50, 80]],
-      [self.ZLalle_prefix + "pt2", "e_pt", "Extra electron p_{T} [GeV]",[0, 5, 7, 10, 20, 30, 40, 50, 80]],
-      [self.ZLallmu_prefix + "pt2", "mu_pt", "Extra muon p_{T} [GeV]",[0, 5, 7, 10, 20, 30, 40, 50, 80]],
-      [self.ZLall_prefix + "eta2", "l_eta", "Extra lepton #eta [GeV]", 100, -3, 3],
-      [self.ZLalle_prefix + "eta2", "e_eta", "Extra electron #eta [GeV]", 100, -3, 3],
-      [self.ZLallmu_prefix + "eta2", "mu_eta", "Extra muon #eta [GeV]", 100, -3, 3],
-      # [self.ZLpass_prefix + "pt2", "l_pass_pt", "Extra lepton passed p_{T} [GeV]", 8, 0, 80],
-      # [self.ZLpasse_prefix + "pt2", "e_pass_pt", "Extra electron passed p_{T} [GeV]", 8, 0, 80],
-      # [self.ZLpassmu_prefix + "pt2", "mu_pass_pt", "Extra muon passed p_{T} [GeV]", 8, 0, 80],
-      [self.ZLpass_prefix + "pt2", "l_pass_pt", "Extra lepton passed p_{T} [GeV]",[0, 5, 7, 10, 20, 30, 40, 50, 80]],
-      [self.ZLpasse_prefix + "pt2", "e_pass_pt", "Extra electron passed p_{T} [GeV]",[0, 5, 7, 10, 20, 30, 40, 50, 80]],
-      [self.ZLpassmu_prefix + "pt2", "mu_pass_pt", "Extra muon passed p_{T} [GeV]",[0, 5, 7, 10, 20, 30, 40, 50, 80]],
-      [self.ZLpass_prefix + "eta2", "l_pass_eta", "Extra lepton passed #eta [GeV]", 100, -3, 3],
-      [self.ZLpasse_prefix + "eta2", "e_pass_eta", "Extra electron passed #eta [GeV]", 100, -3, 3],
-      [self.ZLpassmu_prefix + "eta2", "mu_pass_eta", "Extra muon passed #eta [GeV]", 100, -3, 3],
-      ]
+      [self.ZLall_prefix + "pt2", "l_pt", "p_{T}(l) [GeV]",[5, 7, 10, 20, 30, 40, 50, 80]],
+      [self.ZLalle_prefix + "pt2", "e_pt", "p_{T}(e) [GeV]",[7, 10, 20, 30, 40, 50, 80]],
+      [self.ZLallmu_prefix + "pt2", "mu_pt", "p_{T}(#mu) [GeV]",[5, 7, 10, 20, 30, 40, 50, 80]],
+      [self.ZLall_prefix + "eta2", "l_eta", "#eta(l) [GeV]", 48, -2.4, 2.4],
+      [self.ZLalle_prefix + "eta2", "e_eta", "#eta(e) [GeV]", 48, -2.4, 2.4],
+      [self.ZLallmu_prefix + "eta2", "mu_eta", "#eta(#mu) [GeV]", 48, -2.4, 2.4],
+      [self.ZLpass_prefix + "pt2", "l_pass_pt", "p_{T}(l) [GeV]",[5, 7, 10, 20, 30, 40, 50, 80]],
+      [self.ZLpasse_prefix + "pt2", "e_pass_pt", "p_{T}(e) [GeV]",[7, 10, 20, 30, 40, 50, 80]],
+      [self.ZLpassmu_prefix + "pt2", "mu_pass_pt", "p_{T}(#mu) [GeV]",[5, 7, 10, 20, 30, 40, 50, 80]],
+      [self.ZLpass_prefix + "eta2", "l_pass_eta", "#eta(l) [GeV]", 48, -2.4, 2.4],
+      [self.ZLpasse_prefix + "eta2", "e_pass_eta", "#eta(e) [GeV]", 48, -2.4, 2.4],
+      [self.ZLpassmu_prefix + "eta2", "mu_pass_eta", "#eta(#mu) [GeV]", 48, -2.4, 2.4],
+    ]
     
-    self.output_plots_dir = "plots/trees_05_04/"
-    self.base_dir = "/eos/user/n/nplastir/H+c/trees_05_05/mc/2022EE/merged"
+    self.output_plots_dir = "plots/trees_ZL_final/2022EE"
+    self.base_dir = "/eos/user/n/nplastir/H+c/trees_ZL_final/mc/2022EE/merged"
     self.cuts = "1" # if you don't want cuts remember to put "1"
     self.weights =  "genWeight * xsecWeight * lumiwgt * puWeight * muEffWeight * elEffWeight" #"LHEScaleWeightNorm * LHEPdfWeightNorm * PSWeightNorm"
     self.plot_format = "png"
-    self.energy = "13.6"
-    self.dataset_legend = "26.67"
-    # Luminosity labels for each year
-    # "2016APV": 19.52,
-    # "2016": 16.81,
-    # "2017": 41.53,
-    # "2018": 59.74,
-    # "2022": 7.98, 
-    # "2022EE": 26.67, 
-    # "2023": 17.794, 
-    # "2023BPix": 9.451
+    self.set_year_dependent_values()
 
     self.stack_ymin = 1
     self.stack_ymax = 5e6
@@ -92,3 +74,33 @@ class Config:
     for sample in self.samples_dict:
         filenames.append(self.samples_dict[sample][0])
     return filenames
+
+  def set_year_dependent_values(self):
+    # Define mapping of years to (energy, dataset_legend)
+    year_settings = {
+      "2015":          ("13", "19.52"),
+      "2016APV":       ("13", "19.52"),
+      "2016":          ("13", "16.81"),
+      "2017":          ("13", "41.53"),
+      "2018":          ("13", "59.74"),
+      "2022":          ("13.6", "7.98"),
+      "2022EE":        ("13.6", "26.67"),
+      "2023":          ("13.6", "17.794"),
+      "2023BPix":      ("13.6", "9.451"),
+      "2022_Combined": ("13.6", "34.65"),
+      "2023_Combined": ("13.6", "27.25"),
+      "2022_2023":     ("13.6", "61.9"),
+    }
+
+    # Split the base_dir path and look for exact matches
+    path_parts = os.path.normpath(self.base_dir).split(os.sep)
+
+    for year_key in year_settings:
+      if year_key in path_parts:
+        self.energy, self.dataset_legend = year_settings[year_key]
+        print(f"[INFO] Detected year: {year_key}, set energy: {self.energy}, legend: {self.dataset_legend}")
+        return
+
+    print("[WARNING] No known year found in base_dir. Using default energy and legend.")
+    self.energy = "13.6"
+    self.dataset_legend = "7.98"

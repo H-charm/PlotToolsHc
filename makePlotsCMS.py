@@ -15,15 +15,6 @@ parser.add_argument('-t', '--type', type=str, help='Type of plots', choices=['st
 parser.add_argument('-d', '--data', type=str, help='Real data filename (optional)', default=None)
 args = parser.parse_args()
 
-DATA_FILES = [
-    # "merged_data.root"
-    "DoubleMuon_merged.root",
-    "SingleMuon_merged.root",
-    "EGamma_merged.root",
-    "MuonEG_merged.root",
-    "Muon_merged.root"
-]
-
 def create_RDF(filename):
     print(f"Creating RDF for sample {filename}")
     filename_path = os.path.join(config_file.base_dir, filename)
@@ -118,7 +109,7 @@ def create_plots(config_file):
         stack_temp = ROOT.THStack("stack_temp", f";{variable[2]};{y_title}")
         stack_ratio = ROOT.THStack("stack_ratio", f";{variable[2]};{y_title}")
 
-        legend = CMS.cmsLeg(0.68, 0.69, 0.88, 0.87, textSize=0.025, columns=1)
+        legend = CMS.cmsLeg(0.75, 0.66, 0.88, 0.88, textSize=0.035, columns=1)
 
         for sample, hist in histos_dict.items():
             stack_temp.Add(hist)
@@ -128,8 +119,8 @@ def create_plots(config_file):
         y_min = 0.0
         if config_file.set_logy:
             canvas.SetLogy()
-            y_max = 10 * CMS.cmsReturnMaxY(stack_temp)
-            y_min = 0.1
+            y_max = 100 * CMS.cmsReturnMaxY(stack_temp)
+            y_min = 1
         # elif config_file.set_logy: 
         #     y_max = 2.5 * CMS.cmsReturnMaxY(stack_temp)
         else:
@@ -147,6 +138,20 @@ def create_plots(config_file):
             # Shift multiplier position
             ROOT.TGaxis.SetExponentOffset(-0.10, 0.01, "Y")
 
+        latex = ROOT.TLatex()
+        latex.SetNDC()
+        latex.SetTextSize(0.04)
+        latex.SetTextFont(42)
+        # Optional top-left label if variable name contains "pass"
+        if "passe" in variable[0]:
+            latex.DrawLatex(0.21, 0.87, "#scale[0.9]{Z + e events with e passing selection}")  # Adjust coordinates & text as needed
+        elif "passmu" in variable[0]:
+            latex.DrawLatex(0.21, 0.87, "#scale[0.9]{Z + #mu events with #mu passing selection}")  # Adjust coordinates & text as needed
+        elif "alle" in variable[0]:
+            latex.DrawLatex(0.21, 0.87, "#scale[0.9]{Z + e events}")  # Adjust coordinates & text as needed
+        elif "allmu" in variable[0]:
+            latex.DrawLatex(0.21, 0.87, "#scale[0.9]{Z + #mu events}")  # Adjust coordinates & text as needed
+
         # Draw stack plot with cmsstyle
         CMS.cmsDrawStack(stack, legend, histos_dict, data=(data_histos[variable[0]] if args.data else None))
 
@@ -160,18 +165,32 @@ def create_plots(config_file):
         # CMSStyle DiCanvas
         canv_name_ratio = f"{variable[1]}_canvas_ratio"
         canvas_ratio = CMS.cmsDiCanvas(canv_name_ratio, x_min, x_max, y_min, y_max, 0, 2, variable[2], y_title, "Ratio", square=CMS.kSquare, extraSpace=0.05, iPos=0 )
-        legend_ratio = CMS.cmsLeg(0.68, 0.69, 0.88, 0.87, textSize=0.025, columns=1)
+        legend_ratio = CMS.cmsLeg(0.73, 0.65, 0.88, 0.88, textSize=0.045, columns=1)
         
         # Draw stack plot in the upper pad using cmsstyle
         CMS.cmsDrawStack(stack_ratio, legend_ratio, histos_dict, data=(data_histos[variable[0]] if args.data else None))
         if config_file.set_logy:
             ROOT.gPad.SetLogy()
             ROOT.gPad.Update()
+        
+        latex_ratio = ROOT.TLatex()
+        latex_ratio.SetNDC()
+        latex_ratio.SetTextSize(0.045)
+        latex_ratio.SetTextFont(42)
+        if "passe" in variable[0]:
+            latex_ratio.DrawLatex(0.18, 0.85, "#scale[0.9]{Z + e events with e passing selection}")  # Adjust coordinates & text as needed
+        elif "passmu" in variable[0]:
+            latex_ratio.DrawLatex(0.18, 0.85, "#scale[0.9]{Z + #mu events with #mu passing selection}")  # Adjust coordinates & text as needed
+        elif "alle" in variable[0]:
+            latex_ratio.DrawLatex(0.18, 0.85, "#scale[0.9]{Z + e events}")  # Adjust coordinates & text as needed
+        elif "allmu" in variable[0]:
+            latex_ratio.DrawLatex(0.18, 0.85, "#scale[0.9]{Z + #mu events}")  # Adjust coordinates & text as needed
+
 
         # Change to the bottom pad
         canvas_ratio.cd(2)
         
-        # Sum all MC histograms to create the denominator
+        # Sum all MC histograms to create the dnominator
         mc_total_hist = stack_ratio.GetStack().Last().Clone("mc_total_hist")  # Get the total stacked MC histogram
         data_hist = data_histos[variable[0]]
 
@@ -212,6 +231,17 @@ if __name__ == "__main__":
     config_file = config.Config()
     os.makedirs(os.path.join(config_file.output_plots_dir, args.type), exist_ok=True)
 
+    path_parts = os.path.normpath(config_file.base_dir).split(os.sep)
+    DATA_FILES = [
+        "EGamma_merged.root",
+        "MuonEG_merged.root",
+        "Muon_merged.root"
+    ]
+    if "2022" in path_parts:
+        DATA_FILES += [
+            "DoubleMuon_merged.root",
+            "SingleMuon_merged.root"
+        ]
     # Samples will be stacked in this order
     
     # config_file.add_sample(name="ggZZ", root_file="ggZZ_final_merged.root",cuts=1)
