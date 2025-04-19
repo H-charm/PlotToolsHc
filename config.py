@@ -1,4 +1,5 @@
 import ROOT
+import os
 
 ROOT.gStyle.SetLegendBorderSize(0)
 ROOT.gStyle.SetPadLeftMargin(0.15) 
@@ -71,8 +72,8 @@ class Config:
       # ["deltaR(lep3_eta, lep4_eta, lep3_phi, lep4_phi)","dR_lep3_lep_4","#DeltaR(lep3,lep4)", 60, 0, 6],
       ]
     
-    self.output_plots_dir = "plots/trees_24_02/test"
-    self.base_dir = "/eos/user/n/nplastir/H+c/trees_24_02/mc/2022_2023_Combined"
+    self.output_plots_dir = "plots/trees_17_04/2023"
+    self.base_dir = "/eos/user/n/nplastir/H+c/trees_17_04/mc/2023/merged"
     self.cuts = "1" # if you don't want cuts remember to put "1"
     self.weights =  "genWeight * xsecWeight * lumiwgt * puWeight * muEffWeight * elEffWeight" #"LHEScaleWeightNorm * LHEPdfWeightNorm * PSWeightNorm"
     self.plot_format = "png"
