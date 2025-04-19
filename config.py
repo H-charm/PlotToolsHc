@@ -76,45 +76,13 @@ class Config:
     self.cuts = "1" # if you don't want cuts remember to put "1"
     self.weights =  "genWeight * xsecWeight * lumiwgt * puWeight * muEffWeight * elEffWeight" #"LHEScaleWeightNorm * LHEPdfWeightNorm * PSWeightNorm"
     self.plot_format = "png"
-    self.energy = "13.6"
-    self.dataset_legend = "61.95"
-#     lumi_dict = {
-#     "2016APV": 19.52,
-#     "2016": 16.81,
-#     "2017": 41.53,
-#     "2018": 59.74,
-#     "2022": 7.98, 
-#     "2022EE": 26.67, 
-#     "2023": 17.794, 
-#     "2023BPix": 9.451
-# }
+    self.set_year_dependent_values()
+
     self.stack_ymin = 1
     self.stack_ymax = 5e6
     self.set_logy = False 
     self.samples_dict = {}
-    
-    # ## plot legend
-    # self.legend = {
-    #   "ggH":"ggH", 
-    #   "VBF":"VBF", 
-    #   "WplusH":"WplusH", 
-    #   "WminusH":"WminusH", 
-    #   "ZH":"ZH", 
-    #   "ttH":"ttH",
-    #   "bbH":"bbH",
-    #   "qqZZ": "qqZZ",
-    #   "ggZZ": "ggZZ",
-    #   # "WWZ": "WWZ",
-    #   # "WZZ": "WZZ",
-    #   # "ZZZ": "ZZZ",
-    #   # "TTWW": "TTWW",
-    #   # "TTZZ": "TTZZ",
-    #   # "WZ": "WZ",
-    #   # "DYJets":"DYJets",
-    #   # "TTto2L2Nu":"TTto2L2Nu",
-    #   # "Hc":"Hc",
-    # }   
-    
+        
   ## YOU DON'T NEED TO CHANGE ANYTHING HERE
   ## useful functions
   
@@ -126,3 +94,34 @@ class Config:
     for sample in self.samples_dict:
         filenames.append(self.samples_dict[sample][0])
     return filenames
+  
+  def set_year_dependent_values(self):
+    # Define mapping of years to (energy, dataset_legend)
+    year_settings = {
+      "2015":          ("13", "19.52"),
+      "2016APV":       ("13", "19.52"),
+      "2016":          ("13", "16.81"),
+      "2017":          ("13", "41.53"),
+      "2018":          ("13", "59.74"),
+      "2022":          ("13.6", "7.98"),
+      "2022EE":        ("13.6", "26.67"),
+      "2023":          ("13.6", "17.794"),
+      "2023BPix":      ("13.6", "9.451"),
+      "2022_Combined": ("13.6", "34.65"),
+      "2023_Combined": ("13.6", "27.25"),
+      "2022_2023":     ("13.6", "61.9"),
+      "2022_2023_Combined":     ("13.6", "61.9"),
+    }
+
+    # Split the base_dir path and look for exact matches
+    path_parts = os.path.normpath(self.base_dir).split(os.sep)
+
+    for year_key in year_settings:
+      if year_key in path_parts:
+        self.energy, self.dataset_legend = year_settings[year_key]
+        print(f"[INFO] Detected year: {year_key}, set energy: {self.energy}, legend: {self.dataset_legend}")
+        return
+
+    print("[WARNING] No known year found in base_dir. Using default energy and legend.")
+    self.energy = "13.6"
+    self.dataset_legend = "7.98"

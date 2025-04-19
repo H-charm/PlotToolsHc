@@ -15,15 +15,6 @@ parser.add_argument('-t', '--type', type=str, help='Type of plots', choices=['st
 parser.add_argument('-d', '--data', type=str, help='Real data filename (optional)', default=None)
 args = parser.parse_args()
 
-DATA_FILES = [
-    # "merged_data.root"
-    "DoubleMuon_merged.root",
-    "SingleMuon_merged.root",
-    "EGamma_merged.root",
-    "MuonEG_merged.root",
-    "Muon_merged.root"
-]
-
 def create_RDF(filename):
     print(f"Creating RDF for sample {filename}")
     filename_path = os.path.join(config_file.base_dir, filename)
@@ -211,6 +202,18 @@ if __name__ == "__main__":
 
     config_file = config.Config()
     os.makedirs(os.path.join(config_file.output_plots_dir, args.type), exist_ok=True)
+
+    path_parts = os.path.normpath(config_file.base_dir).split(os.sep)
+    DATA_FILES = [
+        "EGamma_merged.root",
+        "MuonEG_merged.root",
+        "Muon_merged.root"
+    ]
+    if "2022" in path_parts:
+        DATA_FILES += [
+            "DoubleMuon_merged.root",
+            "SingleMuon_merged.root"
+        ]
 
     # Samples will be stacked in this order
     
