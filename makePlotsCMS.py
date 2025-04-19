@@ -109,7 +109,7 @@ def create_plots(config_file):
         stack_temp = ROOT.THStack("stack_temp", f";{variable[2]};{y_title}")
         stack_ratio = ROOT.THStack("stack_ratio", f";{variable[2]};{y_title}")
 
-        legend = CMS.cmsLeg(0.68, 0.69, 0.88, 0.87, textSize=0.025, columns=1)
+        legend = CMS.cmsLeg(0.22, 0.65, 0.92, 0.88, textSize=0.025, columns=4)
 
         for sample, hist in histos_dict.items():
             stack_temp.Add(hist)
@@ -151,7 +151,7 @@ def create_plots(config_file):
         # CMSStyle DiCanvas
         canv_name_ratio = f"{variable[1]}_canvas_ratio"
         canvas_ratio = CMS.cmsDiCanvas(canv_name_ratio, x_min, x_max, y_min, y_max, 0, 2, variable[2], y_title, "Ratio", square=CMS.kSquare, extraSpace=0.05, iPos=0 )
-        legend_ratio = CMS.cmsLeg(0.68, 0.69, 0.88, 0.87, textSize=0.025, columns=1)
+        legend_ratio = CMS.cmsLeg(0.22, 0.65, 0.92, 0.88, textSize=0.025, columns=4)
         
         # Draw stack plot in the upper pad using cmsstyle
         CMS.cmsDrawStack(stack_ratio, legend_ratio, histos_dict, data=(data_histos[variable[0]] if args.data else None))
