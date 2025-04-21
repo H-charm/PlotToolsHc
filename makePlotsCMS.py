@@ -156,7 +156,7 @@ def create_plots(config_file):
         CMS.cmsDrawStack(stack, legend, histos_dict, data=(data_histos[variable[0]] if args.data else None))
 
         # Save canvas
-        CMS.SaveCanvas(canvas,os.path.join(config_file.output_plots_dir, args.type, f"{variable[1]}." + config_file.plot_format), close= True)
+        CMS.SaveCanvas(canvas,os.path.join(config_file.output_plots_dir, "ZL", f"{variable[1]}." + config_file.plot_format), close= True)
 
         #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         # Ratio plots
@@ -223,13 +223,13 @@ def create_plots(config_file):
         line.Draw("same")
 
         # Save canvas
-        CMS.SaveCanvas(canvas_ratio,os.path.join(config_file.output_plots_dir, args.type, f"{variable[1]}_ratio." + config_file.plot_format), close= True)
+        CMS.SaveCanvas(canvas_ratio,os.path.join(config_file.output_plots_dir, "ZL", f"{variable[1]}_ratio." + config_file.plot_format), close= True)
 
 if __name__ == "__main__":
     start_time = time.time()
 
     config_file = config.Config()
-    os.makedirs(os.path.join(config_file.output_plots_dir, args.type), exist_ok=True)
+    os.makedirs(os.path.join(config_file.output_plots_dir, "ZL"), exist_ok=True)
 
     path_parts = os.path.normpath(config_file.base_dir).split(os.sep)
     DATA_FILES = [
@@ -244,26 +244,6 @@ if __name__ == "__main__":
         ]
     # Samples will be stacked in this order
     
-    # config_file.add_sample(name="ggZZ", root_file="ggZZ_final_merged.root",cuts=1)
-    # config_file.add_sample(name="qqZZ", root_file="qqZZ_final_merged.root",cuts=1)
-    # # config_file.add_sample(name="VBFToZZ", root_file="VBFToZZ_final_merged.root",cuts=1)
-    # config_file.add_sample(name="WWZ", root_file="WWZ_final_merged.root",cuts=1)
-    # config_file.add_sample(name="WZZ", root_file="WZZ_final_merged.root",cuts=1)
-    # config_file.add_sample(name="ZZZ", root_file="ZZZ_final_merged.root",cuts=1)
-    # config_file.add_sample(name="TTWW", root_file="TTWW_final_merged.root",cuts=1)
-    # config_file.add_sample(name="TTZZ", root_file="TTZZ_final_merged.root",cuts=1)
-    # config_file.add_sample(name="WZ", root_file="WZ_final_merged.root",cuts=1)
-    # # config_file.add_sample(name="DYJets", root_file="DYJets.root",cuts=1)
-    # # config_file.add_sample(name="TTto2L2Nu", root_file="TTto2L2Nu.root",cuts=1)
-    # config_file.add_sample(name="ggH", root_file="ggH_final_merged.root",cuts=1)
-    # config_file.add_sample(name="VBF", root_file="VBF_final_merged.root",cuts=1)
-    # config_file.add_sample(name="WplusH", root_file="WplusH_final_merged.root",cuts=1)
-    # config_file.add_sample(name="WminusH", root_file="WminusH_final_merged.root",cuts=1)
-    # # config_file.add_sample(name="ZH", root_file="ZH.root",cuts=1)
-    # config_file.add_sample(name="ZH", root_file="ZH_final_merged.root",cuts=1)
-    # config_file.add_sample(name="ttH", root_file="ttH_final_merged.root",cuts=1)
-    # config_file.add_sample(name="bbH", root_file="bbH_final_merged.root",cuts=1)
-    # # config_file.add_sample(name="Hc", root_file="Hc_tree.root",cuts=1)
     config_file.add_sample(name="WZ", root_file="WZ_final_merged.root",cuts=1)
     config_file.add_sample(name="TTto2L2Nu", root_file="TTto2L2Nu_final_merged.root",cuts=1)
     config_file.add_sample(name="DYJets", root_file="DYJets_final_merged.root",cuts=1)
