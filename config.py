@@ -34,6 +34,24 @@ class Config:
     self.ZLpass_prefix = "ZLpass_"
     self.ZLpasse_prefix = "ZLpasse_"
     self.ZLpassmu_prefix = "ZLpassmu_"
+
+    self.ZLL2P2F_prefix = "ZLL2P2F_"
+    self.ZLL2P2F4e_prefix = "ZLL2P2F4e_"
+    self.ZLL2P2F4mu_prefix = "ZLL2P2F4mu_"
+    self.ZLL2P2F2e2mu_prefix = "ZLL2P2F2e2mu_"
+    self.ZLL2P2F2mu2e_prefix = "ZLL2P2F2mu2e_"
+
+    self.ZLL3P1F_prefix = "ZLL3P1F_"
+    self.ZLL3P1F4e_prefix = "ZLL3P1F4e_"
+    self.ZLL3P1F4mu_prefix = "ZLL3P1F4mu_"
+    self.ZLL3P1F2e2mu_prefix = "ZLL3P1F2e2mu_"
+    self.ZLL3P1F2mu2e_prefix = "ZLL3P1F2mu2e_"
+
+    self.ZLLSSCR_prefix = "ZLLSSCR_"
+    self.ZLLSSCR4e_prefix = "ZLLSSCR4e_"
+    self.ZLLSSCR4mu_prefix = "ZLLSSCR4mu_"
+    self.ZLLSSCR2e2mu_prefix = "ZLLSSCR2e2mu_"
+    self.ZLLSSCR2mu2e_prefix = "ZLLSSCR2mu2e_"
       
     ## [branch name, plot name, x-axis label, nbins, xlow, xhigh]
     self.vars = [
@@ -50,9 +68,25 @@ class Config:
       [self.ZLpasse_prefix + "eta2", "e_pass_eta", "#eta(e) [GeV]", 48, -2.4, 2.4],
       [self.ZLpassmu_prefix + "eta2", "mu_pass_eta", "#eta(#mu) [GeV]", 48, -2.4, 2.4],
     ]
+    self.vars_ZLL =[
+      [self.ZLL2P2F_prefix + "mass","2P2F_mass","m [GeV]", 40, 70, 870],
+      [self.ZLL2P2F4e_prefix + "mass","2P2F_mass_4e","m(4e) [GeV]", 40, 70, 870],
+      [self.ZLL2P2F4mu_prefix + "mass","2P2F_mass_4mu","m(4#mu) [GeV]", 40, 70, 870],
+      [self.ZLL2P2F2e2mu_prefix + "mass","2P2F_mass_2e2mu","m(2e2#mu) [GeV]", 40, 70, 870],
+
+      [self.ZLL3P1F_prefix + "mass","3P1F_mass","m [GeV]", 40, 70, 870],
+      [self.ZLL3P1F4e_prefix + "mass","3P1F_mass_4e","m(4e) [GeV]", 40, 70, 870],
+      [self.ZLL3P1F4mu_prefix + "mass","3P1F_mass_4mu","m(4#mu) [GeV]", 40, 70, 870],
+      [self.ZLL3P1F2e2mu_prefix + "mass","3P1F_mass_2e2mu","m(2e2#mu) [GeV]", 40, 70, 870],
+
+      [self.ZLLSSCR_prefix + "mass","SSCR_mass","m [GeV]", 40, 70, 870],
+      [self.ZLLSSCR4e_prefix + "mass","SSCR_mass_4e","m(4e) [GeV]", 40, 70, 870],
+      [self.ZLLSSCR4mu_prefix + "mass","SSCR_mass_4mu","m(4#mu) [GeV]", 40, 70, 870],
+      [self.ZLLSSCR2e2mu_prefix + "mass","SSCR_mass_2e2mu","m(2e2#mu) [GeV]", 40, 70, 870],
+    ]
     
-    self.output_plots_dir = "plots/trees_ZL_final/2022EE"
-    self.base_dir = "/eos/user/n/nplastir/H+c/trees_ZL_final/mc/2022EE/merged"
+    self.output_plots_dir = "plots/trees_17_04/2023/"
+    self.base_dir = "/eos/user/n/nplastir/H+c/trees_17_04/mc/2023/merged"
     self.cuts = "1" # if you don't want cuts remember to put "1"
     self.weights =  "genWeight * xsecWeight * lumiwgt * puWeight * muEffWeight * elEffWeight" #"LHEScaleWeightNorm * LHEPdfWeightNorm * PSWeightNorm"
     self.plot_format = "png"
@@ -60,7 +94,7 @@ class Config:
 
     self.stack_ymin = 1
     self.stack_ymax = 5e6
-    self.set_logy = True 
+    self.set_logy = False 
     self.samples_dict = {}
   
   ## YOU DON'T NEED TO CHANGE ANYTHING HERE
