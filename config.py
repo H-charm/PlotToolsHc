@@ -85,8 +85,8 @@ class Config:
       [self.ZLLSSCR2e2mu_prefix + "mass","SSCR_mass_2e2mu","m(2e2#mu) [GeV]", 40, 70, 870],
     ]
     
-    self.output_plots_dir = "plots/trees_17_04/2023/"
-    self.base_dir = "/eos/user/n/nplastir/H+c/trees_17_04/mc/2023/merged"
+    self.output_plots_dir = "plots/trees_26_04/2022/"
+    self.base_dir = "/eos/user/p/pkatris/Trees_Z+X_corr/mc/2022/merged"
     self.cuts = "1" # if you don't want cuts remember to put "1"
     self.weights =  "genWeight * xsecWeight * lumiwgt * puWeight * muEffWeight * elEffWeight" #"LHEScaleWeightNorm * LHEPdfWeightNorm * PSWeightNorm"
     self.plot_format = "png"

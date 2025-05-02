@@ -19,8 +19,6 @@ def create_RDF(filename):
     print(f"Creating RDF for sample {filename}")
     filename_path = os.path.join(config_file.base_dir, filename)
     df = ROOT.RDataFrame("Events", filename_path)
-
-    # Apply MC weights
     df = df.Define("final_weight", config_file.weights)
     return df
 
