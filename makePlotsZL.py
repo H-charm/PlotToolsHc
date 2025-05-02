@@ -11,7 +11,6 @@ ROOT.gInterpreter.ProcessLine('#include "cpp_functions.C"')
 ROOT.gROOT.SetBatch(True)
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-t', '--type', type=str, help='Type of plots', choices=['stack', 'shape'], default='stack')
 parser.add_argument('-d', '--data', type=str, help='Real data filename (optional)', default=None)
 args = parser.parse_args()
 
@@ -31,7 +30,7 @@ def merge_data_RDF():
 
 def create_plots(config_file):
     samples_dict = config_file.samples_dict
-    variables = config_file.vars
+    variables = config_file.vars_ZL
 
     samples_filenames = config_file.get_samples_filenames()
     RDF_dict = {filename: create_RDF(filename) for filename in samples_filenames}
@@ -68,12 +67,6 @@ def create_plots(config_file):
             )
             # hist = utils.add_underflow(hist)
             hist = utils.add_overflow(hist)
-            # hist.SetLineColor(ROOT.kBlack)
-            # if args.type == "stack":
-            #     
-            # if args.type == "shape":
-            #     # hist.SetLineColor(config_file.colors[sample])
-            #     hist.Scale(1 / hist.Integral())
             histos_dict[sample] = hist.GetPtr()
 
         # Process real data histogram
@@ -144,13 +137,13 @@ def create_plots(config_file):
         latex.SetTextFont(42)
         # Optional top-left label if variable name contains "pass"
         if "passe" in variable[0]:
-            latex.DrawLatex(0.21, 0.87, "#scale[0.9]{Z + e events with e passing selection}")  # Adjust coordinates & text as needed
+            latex.DrawLatex(0.21, 0.87, "#scale[0.9]{Z + e events with e passing selection}")
         elif "passmu" in variable[0]:
-            latex.DrawLatex(0.21, 0.87, "#scale[0.9]{Z + #mu events with #mu passing selection}")  # Adjust coordinates & text as needed
+            latex.DrawLatex(0.21, 0.87, "#scale[0.9]{Z + #mu events with #mu passing selection}")
         elif "alle" in variable[0]:
-            latex.DrawLatex(0.21, 0.87, "#scale[0.9]{Z + e events}")  # Adjust coordinates & text as needed
+            latex.DrawLatex(0.21, 0.87, "#scale[0.9]{Z + e events}")
         elif "allmu" in variable[0]:
-            latex.DrawLatex(0.21, 0.87, "#scale[0.9]{Z + #mu events}")  # Adjust coordinates & text as needed
+            latex.DrawLatex(0.21, 0.87, "#scale[0.9]{Z + #mu events}")
 
         # Draw stack plot with cmsstyle
         CMS.cmsDrawStack(stack, legend, histos_dict, data=(data_histos[variable[0]] if args.data else None))
@@ -179,14 +172,13 @@ def create_plots(config_file):
         latex_ratio.SetTextSize(0.045)
         latex_ratio.SetTextFont(42)
         if "passe" in variable[0]:
-            latex_ratio.DrawLatex(0.18, 0.85, "#scale[0.9]{Z + e events with e passing selection}")  # Adjust coordinates & text as needed
+            latex_ratio.DrawLatex(0.18, 0.85, "#scale[0.9]{Z + e events with e passing selection}")
         elif "passmu" in variable[0]:
-            latex_ratio.DrawLatex(0.18, 0.85, "#scale[0.9]{Z + #mu events with #mu passing selection}")  # Adjust coordinates & text as needed
+            latex_ratio.DrawLatex(0.18, 0.85, "#scale[0.9]{Z + #mu events with #mu passing selection}")
         elif "alle" in variable[0]:
-            latex_ratio.DrawLatex(0.18, 0.85, "#scale[0.9]{Z + e events}")  # Adjust coordinates & text as needed
+            latex_ratio.DrawLatex(0.18, 0.85, "#scale[0.9]{Z + e events}")
         elif "allmu" in variable[0]:
-            latex_ratio.DrawLatex(0.18, 0.85, "#scale[0.9]{Z + #mu events}")  # Adjust coordinates & text as needed
-
+            latex_ratio.DrawLatex(0.18, 0.85, "#scale[0.9]{Z + #mu events}")
 
         # Change to the bottom pad
         canvas_ratio.cd(2)
@@ -231,7 +223,6 @@ if __name__ == "__main__":
 
     config_file = config.Config()
     os.makedirs(os.path.join(config_file.output_plots_dir, "ZL"), exist_ok=True)
-
 
     path_parts = os.path.normpath(config_file.base_dir).split(os.sep)
     DATA_FILES = [

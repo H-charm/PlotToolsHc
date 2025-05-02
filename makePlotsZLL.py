@@ -42,6 +42,10 @@ def create_plots(config_file):
         print("Loading and merging real data...")
         data_df = merge_data_RDF()
         data_histos = {}
+    
+    # Open ROOT file to save histograms
+    output_hist_file = ROOT.TFile(os.path.join(config_file.output_plots_dir, "ZLL", "DataMC_ZLL_Histos.root"), "RECREATE")
+
 
     # CMS Styling Settings
     CMS.SetExtraText("Preliminary")
@@ -68,12 +72,6 @@ def create_plots(config_file):
             )
             # hist = utils.add_underflow(hist)
             hist = utils.add_overflow(hist)
-            # hist.SetLineColor(ROOT.kBlack)
-            # if args.type == "stack":
-            #     
-            # if args.type == "shape":
-            #     # hist.SetLineColor(config_file.colors[sample])
-            #     hist.Scale(1 / hist.Integral())
             histos_dict[sample] = hist.GetPtr()
 
         # Process real data histogram
@@ -119,8 +117,8 @@ def create_plots(config_file):
         y_min = 0.0
         if config_file.set_logy:
             canvas.SetLogy()
-            y_max = 10 * CMS.cmsReturnMaxY(stack_temp)
-            y_min = 0.1
+            y_max = 100 * CMS.cmsReturnMaxY(stack_temp)
+            y_min = 1
         # elif config_file.set_logy: 
         #     y_max = 2.5 * CMS.cmsReturnMaxY(stack_temp)
         else:
@@ -138,12 +136,26 @@ def create_plots(config_file):
             # Shift multiplier position
             ROOT.TGaxis.SetExponentOffset(-0.10, 0.01, "Y")
 
+        latex = ROOT.TLatex()
+        latex.SetNDC()
+        latex.SetTextSize(0.04)
+        latex.SetTextFont(42)
+        #Top-left label according to the CR 
+        if "2P2F" in variable[0]:
+            latex.DrawLatex(0.21, 0.87, "#scale[0.9]{2P + 2F}")
+        elif "3P1F" in variable[0]:
+            latex.DrawLatex(0.21, 0.87, "#scale[0.9]{3P + 1F}")
+        elif "SSCR" in variable[0]:
+            latex.DrawLatex(0.21, 0.87, "#scale[0.9]{SS CR}")
+
         # Draw stack plot with cmsstyle
         CMS.cmsDrawStack(stack, legend, histos_dict, data=(data_histos[variable[0]] if args.data else None))
 
         # Save canvas
         CMS.SaveCanvas(canvas,os.path.join(config_file.output_plots_dir, "ZLL", f"{variable[1]}." + config_file.plot_format), close= True)
 
+        output_hist_file.Close()
+        print(f"[INFO] All histograms saved to {output_hist_file.GetName()}")
         #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         # Ratio plots
         #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -158,6 +170,17 @@ def create_plots(config_file):
         if config_file.set_logy:
             ROOT.gPad.SetLogy()
             ROOT.gPad.Update()
+
+        latex_ratio = ROOT.TLatex()
+        latex_ratio.SetNDC()
+        latex_ratio.SetTextSize(0.045)
+        latex_ratio.SetTextFont(42)
+        if "2P2F" in variable[0]:
+            latex_ratio.DrawLatex(0.18, 0.85, "#scale[0.9]{2P + 2F}") 
+        elif "3P1F" in variable[0]:
+            latex_ratio.DrawLatex(0.18, 0.85, "#scale[0.9]{3P + 1F}")  
+        elif "SSCR" in variable[0]:
+            latex_ratio.DrawLatex(0.18, 0.85, "#scale[0.9]{SS CR}")  
 
         # Change to the bottom pad
         canvas_ratio.cd(2)
@@ -216,9 +239,7 @@ if __name__ == "__main__":
         ]
 
     # Samples will be stacked in this order
-    
-    # config_file.add_sample(name="ggZZ", root_file="ggZZ_final_merged.root",cuts=1)
-    # config_file.add_sample(name="qqZZ", root_file="qqZZ_final_merged.root",cuts=1)
+    config_file.add_sample(name="ZZ", root_file="qqZZ_final_merged.root", cuts=1)
     config_file.add_sample(name="WZ", root_file="WZ_final_merged.root",cuts=1)
     config_file.add_sample(name="TTto2L2Nu", root_file="TTto2L2Nu_final_merged.root",cuts=1)
     config_file.add_sample(name="DYJets", root_file="DYJets_final_merged.root",cuts=1)

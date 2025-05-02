@@ -54,7 +54,7 @@ class Config:
     self.ZLLSSCR2mu2e_prefix = "ZLLSSCR2mu2e_"
       
     ## [branch name, plot name, x-axis label, nbins, xlow, xhigh]
-    self.vars = [
+    self.vars_ZL = [
       [self.ZLall_prefix + "pt2", "l_pt", "p_{T}(l) [GeV]",[5, 7, 10, 20, 30, 40, 50, 80]],
       [self.ZLalle_prefix + "pt2", "e_pt", "p_{T}(e) [GeV]",[7, 10, 20, 30, 40, 50, 80]],
       [self.ZLallmu_prefix + "pt2", "mu_pt", "p_{T}(#mu) [GeV]",[5, 7, 10, 20, 30, 40, 50, 80]],

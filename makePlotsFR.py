@@ -27,8 +27,6 @@ def create_fr_plot(config_file):
     data_df = merge_data_RDF()
     
     # Load WZ sample
-    samples_dict = config_file.samples_dict
-    samples_filenames = config_file.get_samples_filenames()
     WZ_path = os.path.join(config_file.base_dir, "WZ_final_merged.root")
     if not os.path.exists(WZ_path):
         raise FileNotFoundError(f"WZ file not found: {WZ_path}")
@@ -45,8 +43,8 @@ def create_fr_plot(config_file):
     # Get binning information from config file
     binning = None
     x_title = ""
-    for var in config_file.vars:
-        if var[0] == "ZLallmu_pt2":
+    for var in config_file.vars_ZL:
+        if var[0] == "ZLallmu_pt2": # Use this variable in order to get binning from 5 GeV
             binning = var[3]
             x_title = var[2]  # Get axis title from config
             break
@@ -159,15 +157,14 @@ def create_fr_plot(config_file):
         CMS.CMS_lumi(canvas)
 
         # Save plot
-        output_dir = os.path.join(config_file.output_plots_dir, "fr_plots")
-        os.makedirs(output_dir, exist_ok=True)
+        output_dir = os.path.join(config_file.output_plots_dir, "FR")
         CMS.SaveCanvas(canvas, os.path.join(output_dir, f"fr_{particle}."+ config_file.plot_format))
 
 if __name__ == "__main__":
     start_time = time.time()
     
     config_file = config.Config()
-    config_file.add_sample(name="WZ", root_file="WZ_final_merged.root",cuts=1)
+    os.makedirs(os.path.join(config_file.output_plots_dir, "FR"), exist_ok=True)
     path_parts = os.path.normpath(config_file.base_dir).split(os.sep)
     DATA_FILES = [
         "EGamma_merged.root",
