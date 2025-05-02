@@ -64,9 +64,68 @@ def create_RDF_from_data_folder(folder, file_list):
     return ROOT.RDataFrame("Events", paths)
 
 # Build histograms from data
+# def build_zx_histograms_data(df, var, fr):
+#     import ctypes  # Needed for error calculations
+
+#     prefix = var[0].replace("mass", "")
+#     bins = (var[3], var[4], var[5])
+
+#     # Create histograms
+#     h_from2P2F_SR = ROOT.TH1F(f"h_from2P2F_SR_{var[1]}", "", bins[0], bins[1], bins[2])
+#     h_from2P2F_3P1F = ROOT.TH1F(f"h_from2P2F_3P1F_{var[1]}", "", bins[0], bins[1], bins[2])
+#     h_from3P1F_SR = ROOT.TH1F(f"h_from3P1F_SR_{var[1]}", "", bins[0], bins[1], bins[2])
+
+#     print(f"[INFO] Creating histograms for: {var[1]}")
+#     print(f"[INFO] Binning: {bins[0]} bins from {bins[1]} to {bins[2]}")
+
+#     cols = [
+#         var[0],
+#         get_branch(prefix, "lep3", "pt"), get_branch(prefix, "lep3", "eta"), get_branch(prefix, "lep3", "pdgId"),
+#         get_branch(prefix, "lep4", "pt"), get_branch(prefix, "lep4", "eta"), get_branch(prefix, "lep4", "pdgId")
+#     ]
+
+#     data = df.AsNumpy(columns=cols)
+
+#     print(f"[DEBUG] Processing variable: {var[1]}")
+#     print(f"[DEBUG] Total events selected: {len(data[var[0]])}")
+
+#     for i in range(len(data[var[0]])):
+#         mass = extract_scalar(data[var[0]][i])
+#         pt3 = extract_scalar(data[cols[1]][i])
+#         eta3 = extract_scalar(data[cols[2]][i])
+#         id3 = extract_scalar(data[cols[3]][i])
+#         pt4 = extract_scalar(data[cols[4]][i])
+#         eta4 = extract_scalar(data[cols[5]][i])
+#         id4 = extract_scalar(data[cols[6]][i])
+
+#         fr3 = fr.get(pt3, eta3, id3)
+#         fr4 = fr.get(pt4, eta4, id4)
+
+#         weight_2P2F = (fr3 / (1 - fr3)) * (fr4 / (1 - fr4))
+#         weight_3P1F_like = (fr3 / (1 - fr3)) + (fr4 / (1 - fr4))
+
+#         # Fill histograms
+#         if "2P2F" in var[0]:
+#             h_from2P2F_SR.Fill(mass, weight_2P2F)
+#             h_from2P2F_3P1F.Fill(mass, weight_3P1F_like)
+#         elif "3P1F" in var[0]:
+#             h_from3P1F_SR.Fill(mass, fr3 / (1 - fr3))
+
+#     # Print histogram integrals with error
+#     for hist in [h_from2P2F_SR, h_from2P2F_3P1F, h_from3P1F_SR]:
+#         stat_err = ctypes.c_double(0.0)
+#         integral = hist.IntegralAndError(0, hist.GetNbinsX() + 1, stat_err)
+#         print(f"[RESULT] {hist.GetName()} → Yield: {integral:.2f} ± {stat_err.value:.2f}")
+
+#     return h_from2P2F_SR, h_from2P2F_3P1F, h_from3P1F_SR
+
 def build_zx_histograms_data(df, var, fr):
+    import ctypes  # Needed for error calculations
+
     prefix = var[0].replace("mass", "")
     bins = (var[3], var[4], var[5])
+
+    # Create histograms
     h_from2P2F_SR = ROOT.TH1F(f"h_from2P2F_SR_{var[1]}", "", bins[0], bins[1], bins[2])
     h_from2P2F_3P1F = ROOT.TH1F(f"h_from2P2F_3P1F_{var[1]}", "", bins[0], bins[1], bins[2])
     h_from3P1F_SR = ROOT.TH1F(f"h_from3P1F_SR_{var[1]}", "", bins[0], bins[1], bins[2])
@@ -78,9 +137,15 @@ def build_zx_histograms_data(df, var, fr):
     ]
 
     data = df.AsNumpy(columns=cols)
+    # Counters for accepted events
+    n_2P2F = 0
+    n_3P1F = 0
 
     for i in range(len(data[var[0]])):
         mass = extract_scalar(data[var[0]][i])
+        if mass <= 70:
+            continue  # Skip unphysical or undefined mass
+
         pt3 = extract_scalar(data[cols[1]][i])
         eta3 = extract_scalar(data[cols[2]][i])
         id3 = extract_scalar(data[cols[3]][i])
@@ -88,38 +153,92 @@ def build_zx_histograms_data(df, var, fr):
         eta4 = extract_scalar(data[cols[5]][i])
         id4 = extract_scalar(data[cols[6]][i])
 
-
         fr3 = fr.get(pt3, eta3, id3)
         fr4 = fr.get(pt4, eta4, id4)
-        if mass > 0:
-            print(f"[DEBUG] Event {i}: mass={mass:.2f}, pt3={pt3:.2f}, eta3={eta3:.2f}, id3={id3}, fr3={fr3},fr4={fr4}")
-            print(f"Fake rate contribute ={(fr3 / (1 - fr3)) + (fr4 / (1 - fr4))}")
-            print(f"Fake rate contribute ={(fr3 / (1 - fr3))}")
 
+        weight_2P2F = (fr3 / (1 - fr3)) * (fr4 / (1 - fr4))
+        weight_3P1F_like = (fr3 / (1 - fr3)) + (fr4 / (1 - fr4))
 
+        # Fill histograms only for valid mass
         if "2P2F" in var[0]:
-            h_from2P2F_SR.Fill(mass, (fr3 / (1 - fr3)) * (fr4 / (1 - fr4)))
-            h_from2P2F_3P1F.Fill(mass, (fr3 / (1 - fr3)) + (fr4 / (1 - fr4)))
+            h_from2P2F_SR.Fill(mass, weight_2P2F)
+            h_from2P2F_3P1F.Fill(mass, weight_3P1F_like)
+            n_2P2F += 1
         elif "3P1F" in var[0]:
-            h_from3P1F_SR.Fill(mass, fr3 / (1 - fr3))
+            h_from3P1F_SR.Fill(mass, fr3 / (1 - fr3))  # You may want to add ID logic here
+            n_3P1F += 1
+
+    # Print histogram integrals with error
+    for hist in [h_from2P2F_SR, h_from2P2F_3P1F, h_from3P1F_SR]:
+        stat_err = ctypes.c_double(0.0)
+        integral = hist.IntegralAndError(0, hist.GetNbinsX() + 1, stat_err)
+        print(f"[RESULT] {hist.GetName()} → Yield: {integral:.2f} ± {stat_err.value:.2f}")
+
+    # Final summary
+    if "2P2F" in var[0]:
+        print(f"[SUMMARY] Total 2P2F events with mass > 0: {n_2P2F}")
+    elif "3P1F" in var[0]:
+        print(f"[SUMMARY] Total 3P1F events with mass > 0: {n_3P1F}")
 
     return h_from2P2F_SR, h_from2P2F_3P1F, h_from3P1F_SR
 
+
 # Build MC histograms
+# def build_zx_histogram_mc(df, var, fr):
+#     prefix = var[0].replace("mass", "")
+#     bins = (var[3], var[4], var[5])
+#     h = ROOT.TH1F(f"h_from3P1F_SR_ZZonly_{var[1]}", "", bins[0], bins[1], bins[2])
+
+#     cols = [var[0], get_branch(prefix, "lep3", "pt"), get_branch(prefix, "lep3", "eta"), get_branch(prefix, "lep3", "pdgId"), "final_weight"]
+#     data = df.AsNumpy(columns=cols)
+
+#     for i in range(len(data[var[0]])):
+#         pt3 = extract_scalar(data[cols[1]][i])
+#         eta3 = extract_scalar(data[cols[2]][i])
+#         id3 = extract_scalar(data[cols[3]][i])
+#         w = extract_scalar(data["final_weight"][i]) * (fr.get(pt3, eta3, id3) / (1 - fr.get(pt3, eta3, id3)))
+#         h.Fill(extract_scalar(data[var[0]][i]), w)
+#     return h
+
 def build_zx_histogram_mc(df, var, fr):
+    import ctypes  # for IntegralAndError
+
     prefix = var[0].replace("mass", "")
     bins = (var[3], var[4], var[5])
     h = ROOT.TH1F(f"h_from3P1F_SR_ZZonly_{var[1]}", "", bins[0], bins[1], bins[2])
 
-    cols = [var[0], get_branch(prefix, "lep3", "pt"), get_branch(prefix, "lep3", "eta"), get_branch(prefix, "lep3", "pdgId"), "final_weight"]
+    cols = [
+        var[0],
+        get_branch(prefix, "lep3", "pt"),
+        get_branch(prefix, "lep3", "eta"),
+        get_branch(prefix, "lep3", "pdgId"),
+        "final_weight"
+    ]
+
     data = df.AsNumpy(columns=cols)
 
+    n_valid_mc = 0
+
     for i in range(len(data[var[0]])):
+        mass = extract_scalar(data[var[0]][i])
+        if mass <= 70:
+            continue  # skip events with invalid mass
+
         pt3 = extract_scalar(data[cols[1]][i])
         eta3 = extract_scalar(data[cols[2]][i])
         id3 = extract_scalar(data[cols[3]][i])
-        w = extract_scalar(data["final_weight"][i]) * (fr.get(pt3, eta3, id3) / (1 - fr.get(pt3, eta3, id3)))
-        h.Fill(extract_scalar(data[var[0]][i]), w)
+        fr_val = fr.get(pt3, eta3, id3)
+
+        w = extract_scalar(data["final_weight"][i]) * (fr_val / (1 - fr_val))
+        h.Fill(mass, w)
+        n_valid_mc += 1
+
+    # Print histogram integral
+    stat_err = ctypes.c_double(0.0)
+    integral = h.IntegralAndError(0, h.GetNbinsX() + 1, stat_err)
+    print(f"[RESULT] {h.GetName()} → Yield: {integral:.2f} ± {stat_err.value:.2f}")
+    print(f"[SUMMARY] Total MC events with mass > 0 used: {n_valid_mc}")
+
     return h
 
 # Main estimation function
