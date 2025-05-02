@@ -165,6 +165,7 @@ def create_plots(config_file):
         # CMSStyle DiCanvas
         canv_name_ratio = f"{variable[1]}_canvas_ratio"
         canvas_ratio = CMS.cmsDiCanvas(canv_name_ratio, x_min, x_max, y_min, y_max, 0, 2, variable[2], y_title, "Ratio", square=CMS.kSquare, extraSpace=0.05, iPos=0 )
+
         legend_ratio = CMS.cmsLeg(0.73, 0.65, 0.88, 0.88, textSize=0.045, columns=1)
         
         # Draw stack plot in the upper pad using cmsstyle
@@ -231,6 +232,7 @@ if __name__ == "__main__":
     config_file = config.Config()
     os.makedirs(os.path.join(config_file.output_plots_dir, "ZL"), exist_ok=True)
 
+
     path_parts = os.path.normpath(config_file.base_dir).split(os.sep)
     DATA_FILES = [
         "EGamma_merged.root",
@@ -242,8 +244,8 @@ if __name__ == "__main__":
             "DoubleMuon_merged.root",
             "SingleMuon_merged.root"
         ]
+
     # Samples will be stacked in this order
-    
     config_file.add_sample(name="WZ", root_file="WZ_final_merged.root",cuts=1)
     config_file.add_sample(name="TTto2L2Nu", root_file="TTto2L2Nu_final_merged.root",cuts=1)
     config_file.add_sample(name="DYJets", root_file="DYJets_final_merged.root",cuts=1)

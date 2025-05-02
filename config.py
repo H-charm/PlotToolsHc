@@ -96,7 +96,7 @@ class Config:
     self.stack_ymax = 5e6
     self.set_logy = False 
     self.samples_dict = {}
-  
+    
   ## YOU DON'T NEED TO CHANGE ANYTHING HERE
   ## useful functions
   
@@ -124,6 +124,7 @@ class Config:
       "2022_Combined": ("13.6", "34.65"),
       "2023_Combined": ("13.6", "27.25"),
       "2022_2023":     ("13.6", "61.9"),
+      "2022_2023_Combined":     ("13.6", "61.9"),
     }
 
     # Split the base_dir path and look for exact matches
