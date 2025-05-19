@@ -98,8 +98,9 @@ class Config:
             "2e2mu": "ZLL3P1F2e2mu_"
     }
 
-    self.output_plots_dir = "plots_ZX_alt/"
-    self.base_dir = "/eos/user/p/pkatris/Z+x_alt/mc/2022/merged/"
+    self.output_plots_dir = "plots_ZX_alt_2022EE/"
+    self.base_dir = "/eos/user/p/pkatris/ZLL_Trees_DY/mc/2022EE/merged/"
+    # self.base_dir = "/eos/user/p/pkatris/Trees_Rare_Bkgs_FR_Rest/mc/2022EE/merged/"
     self.cuts = "1" # if you don't want cuts remember to put "1"
     self.weights =  "genWeight * xsecWeight * lumiwgt * puWeight * muEffWeight * elEffWeight" #"LHEScaleWeightNorm * LHEPdfWeightNorm * PSWeightNorm"
     self.plot_format = "png"

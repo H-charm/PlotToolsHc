@@ -7,15 +7,14 @@ import time
 # Argument parser
 parser = argparse.ArgumentParser()
 parser.add_argument('-d', '--data', type=str, help='Path to real data folder', required=True)
+parser.add_argument('-y', '--year', type=str, help='Dataset year (e.g., 2022, 2022EE)', required=True)
 args = parser.parse_args()
 
 # Helpers
 def extract_scalar(x):
     try:
-        # Try indexing, if it's an RVec or similar
         return float(x[0]) if len(x) > 0 else 0.0
     except Exception:
-        # Otherwise, assume it's already scalar
         return float(x)
 
 def get_branch(prefix, lep, var):
@@ -64,68 +63,11 @@ def create_RDF_from_data_folder(folder, file_list):
     return ROOT.RDataFrame("Events", paths)
 
 # Build histograms from data
-# def build_zx_histograms_data(df, var, fr):
-#     import ctypes  # Needed for error calculations
-
-#     prefix = var[0].replace("mass", "")
-#     bins = (var[3], var[4], var[5])
-
-#     # Create histograms
-#     h_from2P2F_SR = ROOT.TH1F(f"h_from2P2F_SR_{var[1]}", "", bins[0], bins[1], bins[2])
-#     h_from2P2F_3P1F = ROOT.TH1F(f"h_from2P2F_3P1F_{var[1]}", "", bins[0], bins[1], bins[2])
-#     h_from3P1F_SR = ROOT.TH1F(f"h_from3P1F_SR_{var[1]}", "", bins[0], bins[1], bins[2])
-
-#     print(f"[INFO] Creating histograms for: {var[1]}")
-#     print(f"[INFO] Binning: {bins[0]} bins from {bins[1]} to {bins[2]}")
-
-#     cols = [
-#         var[0],
-#         get_branch(prefix, "lep3", "pt"), get_branch(prefix, "lep3", "eta"), get_branch(prefix, "lep3", "pdgId"),
-#         get_branch(prefix, "lep4", "pt"), get_branch(prefix, "lep4", "eta"), get_branch(prefix, "lep4", "pdgId")
-#     ]
-
-#     data = df.AsNumpy(columns=cols)
-
-#     print(f"[DEBUG] Processing variable: {var[1]}")
-#     print(f"[DEBUG] Total events selected: {len(data[var[0]])}")
-
-#     for i in range(len(data[var[0]])):
-#         mass = extract_scalar(data[var[0]][i])
-#         pt3 = extract_scalar(data[cols[1]][i])
-#         eta3 = extract_scalar(data[cols[2]][i])
-#         id3 = extract_scalar(data[cols[3]][i])
-#         pt4 = extract_scalar(data[cols[4]][i])
-#         eta4 = extract_scalar(data[cols[5]][i])
-#         id4 = extract_scalar(data[cols[6]][i])
-
-#         fr3 = fr.get(pt3, eta3, id3)
-#         fr4 = fr.get(pt4, eta4, id4)
-
-#         weight_2P2F = (fr3 / (1 - fr3)) * (fr4 / (1 - fr4))
-#         weight_3P1F_like = (fr3 / (1 - fr3)) + (fr4 / (1 - fr4))
-
-#         # Fill histograms
-#         if "2P2F" in var[0]:
-#             h_from2P2F_SR.Fill(mass, weight_2P2F)
-#             h_from2P2F_3P1F.Fill(mass, weight_3P1F_like)
-#         elif "3P1F" in var[0]:
-#             h_from3P1F_SR.Fill(mass, fr3 / (1 - fr3))
-
-#     # Print histogram integrals with error
-#     for hist in [h_from2P2F_SR, h_from2P2F_3P1F, h_from3P1F_SR]:
-#         stat_err = ctypes.c_double(0.0)
-#         integral = hist.IntegralAndError(0, hist.GetNbinsX() + 1, stat_err)
-#         print(f"[RESULT] {hist.GetName()} → Yield: {integral:.2f} ± {stat_err.value:.2f}")
-
-#     return h_from2P2F_SR, h_from2P2F_3P1F, h_from3P1F_SR
-
 def build_zx_histograms_data(df, var, fr):
-    import ctypes  # Needed for error calculations
-
+    import ctypes
     prefix = var[0].replace("mass", "")
     bins = (var[3], var[4], var[5])
 
-    # Create histograms
     h_from2P2F_SR = ROOT.TH1F(f"h_from2P2F_SR_{var[1]}", "", bins[0], bins[1], bins[2])
     h_from2P2F_3P1F = ROOT.TH1F(f"h_from2P2F_3P1F_{var[1]}", "", bins[0], bins[1], bins[2])
     h_from3P1F_SR = ROOT.TH1F(f"h_from3P1F_SR_{var[1]}", "", bins[0], bins[1], bins[2])
@@ -137,14 +79,13 @@ def build_zx_histograms_data(df, var, fr):
     ]
 
     data = df.AsNumpy(columns=cols)
-    # Counters for accepted events
     n_2P2F = 0
     n_3P1F = 0
 
     for i in range(len(data[var[0]])):
         mass = extract_scalar(data[var[0]][i])
         if mass <= 70:
-            continue  # Skip unphysical or undefined mass
+            continue
 
         pt3 = extract_scalar(data[cols[1]][i])
         eta3 = extract_scalar(data[cols[2]][i])
@@ -159,22 +100,19 @@ def build_zx_histograms_data(df, var, fr):
         weight_2P2F = (fr3 / (1 - fr3)) * (fr4 / (1 - fr4))
         weight_3P1F_like = (fr3 / (1 - fr3)) + (fr4 / (1 - fr4))
 
-        # Fill histograms only for valid mass
         if "2P2F" in var[0]:
             h_from2P2F_SR.Fill(mass, weight_2P2F)
             h_from2P2F_3P1F.Fill(mass, weight_3P1F_like)
             n_2P2F += 1
         elif "3P1F" in var[0]:
-            h_from3P1F_SR.Fill(mass, fr3 / (1 - fr3))  # You may want to add ID logic here
+            h_from3P1F_SR.Fill(mass, fr3 / (1 - fr3))
             n_3P1F += 1
 
-    # Print histogram integrals with error
     for hist in [h_from2P2F_SR, h_from2P2F_3P1F, h_from3P1F_SR]:
         stat_err = ctypes.c_double(0.0)
         integral = hist.IntegralAndError(0, hist.GetNbinsX() + 1, stat_err)
         print(f"[RESULT] {hist.GetName()} → Yield: {integral:.2f} ± {stat_err.value:.2f}")
 
-    # Final summary
     if "2P2F" in var[0]:
         print(f"[SUMMARY] Total 2P2F events with mass > 0: {n_2P2F}")
     elif "3P1F" in var[0]:
@@ -182,27 +120,9 @@ def build_zx_histograms_data(df, var, fr):
 
     return h_from2P2F_SR, h_from2P2F_3P1F, h_from3P1F_SR
 
-
 # Build MC histograms
-# def build_zx_histogram_mc(df, var, fr):
-#     prefix = var[0].replace("mass", "")
-#     bins = (var[3], var[4], var[5])
-#     h = ROOT.TH1F(f"h_from3P1F_SR_ZZonly_{var[1]}", "", bins[0], bins[1], bins[2])
-
-#     cols = [var[0], get_branch(prefix, "lep3", "pt"), get_branch(prefix, "lep3", "eta"), get_branch(prefix, "lep3", "pdgId"), "final_weight"]
-#     data = df.AsNumpy(columns=cols)
-
-#     for i in range(len(data[var[0]])):
-#         pt3 = extract_scalar(data[cols[1]][i])
-#         eta3 = extract_scalar(data[cols[2]][i])
-#         id3 = extract_scalar(data[cols[3]][i])
-#         w = extract_scalar(data["final_weight"][i]) * (fr.get(pt3, eta3, id3) / (1 - fr.get(pt3, eta3, id3)))
-#         h.Fill(extract_scalar(data[var[0]][i]), w)
-#     return h
-
 def build_zx_histogram_mc(df, var, fr):
-    import ctypes  # for IntegralAndError
-
+    import ctypes
     prefix = var[0].replace("mass", "")
     bins = (var[3], var[4], var[5])
     h = ROOT.TH1F(f"h_from3P1F_SR_ZZonly_{var[1]}", "", bins[0], bins[1], bins[2])
@@ -216,13 +136,12 @@ def build_zx_histogram_mc(df, var, fr):
     ]
 
     data = df.AsNumpy(columns=cols)
-
     n_valid_mc = 0
 
     for i in range(len(data[var[0]])):
         mass = extract_scalar(data[var[0]][i])
-        if mass <= 70:
-            continue  # skip events with invalid mass
+        if mass <= 0:
+            continue
 
         pt3 = extract_scalar(data[cols[1]][i])
         eta3 = extract_scalar(data[cols[2]][i])
@@ -233,7 +152,6 @@ def build_zx_histogram_mc(df, var, fr):
         h.Fill(mass, w)
         n_valid_mc += 1
 
-    # Print histogram integral
     stat_err = ctypes.c_double(0.0)
     integral = h.IntegralAndError(0, h.GetNbinsX() + 1, stat_err)
     print(f"[RESULT] {h.GetName()} → Yield: {integral:.2f} ± {stat_err.value:.2f}")
@@ -247,10 +165,19 @@ def run_zx_estimation(config_file):
     os.makedirs(config_file.output_plots_dir, exist_ok=True)
 
     df_zz = create_RDF_from_sample(config_file.samples_dict["ZZ"][0], config_file)
-    df_data = create_RDF_from_data_folder(args.data, ["EGamma_merged.root", "MuonEG_merged.root", "Muon_merged.root","DoubleMuon_merged.root", "SingleMuon_merged.root"])
 
-    fr = FakeRateReader("fr_graphs.root")
-    fout = ROOT.TFile(os.path.join(config_file.output_plots_dir, "ZXHistos_OS.root"), "RECREATE")
+    if args.year == "2022":
+        data_files = ["EGamma_merged.root", "MuonEG_merged.root", "Muon_merged.root", "DoubleMuon_merged.root", "SingleMuon_merged.root"]
+    else:
+        data_files = ["EGamma_merged.root", "MuonEG_merged.root", "Muon_merged.root"]
+
+    df_data = create_RDF_from_data_folder(args.data, data_files)
+
+    fr_path = os.path.join("fr_files", f"fr_graphs_{args.year}.root")
+    fr = FakeRateReader(fr_path)
+
+    output_filename = f"ZXHistos_OS_{args.year}.root"
+    fout = ROOT.TFile(os.path.join(config_file.output_plots_dir, output_filename), "RECREATE")
 
     final_states = ["inclusive", "4e", "4mu", "2e2mu"]
     for fs in final_states:
@@ -284,3 +211,4 @@ if __name__ == "__main__":
     config_file = config.Config()
     config_file.add_sample(name="ZZ", root_file="qqZZ_final_merged.root", cuts=1)
     run_zx_estimation(config_file)
+

@@ -1,6 +1,15 @@
 import ROOT
 import os
 import cmsstyle as CMS
+import os
+import config
+import argparse
+import time
+
+# Argument parser
+parser = argparse.ArgumentParser()
+parser.add_argument('-y', '--year', type=str, help='Dataset year (e.g., 2022, 2022EE)', required=True)
+args = parser.parse_args()
 
 def set_hist_style(hist, fill_color, line_color):
     hist.SetFillColor(fill_color)
@@ -37,7 +46,7 @@ def plot_data_mc(region, mc_file, zx_file, output_dir, final_states):
             hname = f"hist_{proc}_{suffix}"
             hist = f_mc.Get(hname)
             if hist:
-                hist.Rebin(2)
+                # hist.Rebin(2)
                 set_hist_style(hist, colors[proc], colors[proc])
                 stack.Add(hist)
                 hists_mc[proc] = hist
@@ -46,7 +55,7 @@ def plot_data_mc(region, mc_file, zx_file, output_dir, final_states):
         if not h_data:
             print(f"[WARNING] Missing data for {fs}")
             continue
-        h_data.Rebin(2)
+        # h_data.Rebin(2)
         h_data.SetMarkerStyle(20)
         h_data.SetMarkerSize(0.9)
         h_data.SetLineColor(ROOT.kBlack)
@@ -58,19 +67,20 @@ def plot_data_mc(region, mc_file, zx_file, output_dir, final_states):
             h_zx_name = f"h_from2P2F_3P1F_2P2F_mass_{fs}"
             print(h_zx_name)
             h_zx = f_zx.Get(h_zx_name)
-            h_zx.Rebin(2)
+            # h_zx.Rebin(2)
             h_zx.SetLineColor(ROOT.kRed)
             h_zx.SetLineWidth(3)
             h_zx.SetFillStyle(0)
 
         # --- Draw
+        CMS.CMS_lumi(canvas)
         stack.Draw("HIST")
         stack.GetXaxis().SetTitle("m_{4l} [GeV]")
         stack.GetYaxis().SetTitle("Events")
         stack.GetYaxis().SetTitleOffset(1.6)
         stack.GetXaxis().SetTitleOffset(1.2)
         stack.SetMinimum(1e-2)
-        stack.SetMaximum(h_data.GetMaximum()*2.5)
+        stack.SetMaximum(h_data.GetMaximum()*1.2)
 
         if h_zx:
             h_zx.Draw("HIST SAME")
@@ -113,14 +123,14 @@ def plot_data_mc(region, mc_file, zx_file, output_dir, final_states):
 # -- Now the script to run --
 
 final_states = ["4e", "4mu", "2e2mu", "inclusive"]  # "" = inclusive
-output_dir_3p1f = "plots/3P1F"
-output_dir_2p2f = "plots/2P2F"
+output_dir_3p1f = f"plots_ZX_alt_{args.year}/3P1F_fit"
+output_dir_2p2f = f"plots_ZX_alt_{args.year}/2P2F_fit"
 
 # Plot 3P1F
 plot_data_mc(
     region="3P1F",
-    mc_file="DataMC_ZLL_Histos.root",
-    zx_file="ZXHistos_OS.root",
+    mc_file=f"plots_ZX_alt_{args.year}/ZLL/DataMC_ZLL_Histos.root",
+    zx_file=f"plots_ZX_alt_{args.year}/ZXHistos_OS_{args.year}.root",
     output_dir=output_dir_3p1f,
     final_states=final_states
 )
@@ -128,7 +138,7 @@ plot_data_mc(
 # Plot 2P2F
 plot_data_mc(
     region="2P2F",
-    mc_file="DataMC_ZLL_Histos.root",
+    mc_file=f"plots_ZX_alt_{args.year}/ZLL/DataMC_ZLL_Histos.root",
     zx_file=None,
     output_dir=output_dir_2p2f,
     final_states=final_states

@@ -1,6 +1,16 @@
 import ROOT
 import ctypes
 
+import os
+import config
+import argparse
+import time
+
+# Argument parser
+parser = argparse.ArgumentParser()
+parser.add_argument('-y', '--year', type=str, help='Dataset year (e.g., 2022, 2022EE)', required=True)
+args = parser.parse_args()
+
 def print_all_histogram_yields(root_file_path, output_txt_file):
     file = ROOT.TFile.Open(root_file_path)
     if not file or file.IsZombie():
@@ -33,6 +43,6 @@ def print_all_histogram_yields(root_file_path, output_txt_file):
     print(f"[INFO] Yields saved to {output_txt_file}")
 
 if __name__ == "__main__":
-    root_file = "ZXHistos_OS.root"
-    output_txt = "All_ZX_yields.txt"
+    root_file = f"plots_ZX_alt_{args.year}/ZXHistos_OS_{args.year}.root"
+    output_txt = f"All_ZX_yields_{args.year}.txt"
     print_all_histogram_yields(root_file, output_txt)
