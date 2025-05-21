@@ -9,7 +9,7 @@ import cmsstyle as CMS  # CMS styling utilities
 ROOT.ROOT.EnableImplicitMT()
 ROOT.gROOT.SetBatch(True)
 
-palette = ["#00ffff","#ff33ff","#0000ff","#00ff00"]
+palette = ["#00cccc","#ff66ff","#3333ff","#009900"]
 
 # Argument parser
 parser = argparse.ArgumentParser()
