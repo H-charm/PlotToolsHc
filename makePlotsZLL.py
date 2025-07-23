@@ -19,8 +19,6 @@ def create_RDF(filename):
     print(f"Creating RDF for sample {filename}")
     filename_path = os.path.join(config_file.base_dir, filename)
     df = ROOT.RDataFrame("Events", filename_path)
-
-    # Apply MC weights
     df = df.Define("final_weight", config_file.weights)
     return df
 
@@ -31,7 +29,7 @@ def merge_data_RDF():
 
 def create_plots(config_file):
     samples_dict = config_file.samples_dict
-    variables = config_file.vars
+    variables = config_file.vars_ZLL
 
     samples_filenames = config_file.get_samples_filenames()
     RDF_dict = {filename: create_RDF(filename) for filename in samples_filenames}
@@ -119,8 +117,8 @@ def create_plots(config_file):
         y_min = 0.0
         if config_file.set_logy:
             canvas.SetLogy()
-            y_max = 100 * CMS.cmsReturnMaxY(stack_temp)
-            y_min = 1
+            y_max = 10 * CMS.cmsReturnMaxY(stack_temp)
+            y_min = 0.1
         # elif config_file.set_logy: 
         #     y_max = 2.5 * CMS.cmsReturnMaxY(stack_temp)
         else:
@@ -138,25 +136,11 @@ def create_plots(config_file):
             # Shift multiplier position
             ROOT.TGaxis.SetExponentOffset(-0.10, 0.01, "Y")
 
-        latex = ROOT.TLatex()
-        latex.SetNDC()
-        latex.SetTextSize(0.04)
-        latex.SetTextFont(42)
-        # Optional top-left label if variable name contains "pass"
-        if "passe" in variable[0]:
-            latex.DrawLatex(0.21, 0.87, "#scale[0.9]{Z + e events with e passing selection}")  # Adjust coordinates & text as needed
-        elif "passmu" in variable[0]:
-            latex.DrawLatex(0.21, 0.87, "#scale[0.9]{Z + #mu events with #mu passing selection}")  # Adjust coordinates & text as needed
-        elif "alle" in variable[0]:
-            latex.DrawLatex(0.21, 0.87, "#scale[0.9]{Z + e events}")  # Adjust coordinates & text as needed
-        elif "allmu" in variable[0]:
-            latex.DrawLatex(0.21, 0.87, "#scale[0.9]{Z + #mu events}")  # Adjust coordinates & text as needed
-
         # Draw stack plot with cmsstyle
         CMS.cmsDrawStack(stack, legend, histos_dict, data=(data_histos[variable[0]] if args.data else None))
 
         # Save canvas
-        CMS.SaveCanvas(canvas,os.path.join(config_file.output_plots_dir, "ZL", f"{variable[1]}." + config_file.plot_format), close= True)
+        CMS.SaveCanvas(canvas,os.path.join(config_file.output_plots_dir, "ZLL", f"{variable[1]}." + config_file.plot_format), close= True)
 
         #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         # Ratio plots
@@ -172,25 +156,11 @@ def create_plots(config_file):
         if config_file.set_logy:
             ROOT.gPad.SetLogy()
             ROOT.gPad.Update()
-        
-        latex_ratio = ROOT.TLatex()
-        latex_ratio.SetNDC()
-        latex_ratio.SetTextSize(0.045)
-        latex_ratio.SetTextFont(42)
-        if "passe" in variable[0]:
-            latex_ratio.DrawLatex(0.18, 0.85, "#scale[0.9]{Z + e events with e passing selection}")  # Adjust coordinates & text as needed
-        elif "passmu" in variable[0]:
-            latex_ratio.DrawLatex(0.18, 0.85, "#scale[0.9]{Z + #mu events with #mu passing selection}")  # Adjust coordinates & text as needed
-        elif "alle" in variable[0]:
-            latex_ratio.DrawLatex(0.18, 0.85, "#scale[0.9]{Z + e events}")  # Adjust coordinates & text as needed
-        elif "allmu" in variable[0]:
-            latex_ratio.DrawLatex(0.18, 0.85, "#scale[0.9]{Z + #mu events}")  # Adjust coordinates & text as needed
-
 
         # Change to the bottom pad
         canvas_ratio.cd(2)
         
-        # Sum all MC histograms to create the dnominator
+        # Sum all MC histograms to create the denominator
         mc_total_hist = stack_ratio.GetStack().Last().Clone("mc_total_hist")  # Get the total stacked MC histogram
         data_hist = data_histos[variable[0]]
 
@@ -223,13 +193,13 @@ def create_plots(config_file):
         line.Draw("same")
 
         # Save canvas
-        CMS.SaveCanvas(canvas_ratio,os.path.join(config_file.output_plots_dir, "ZL", f"{variable[1]}_ratio." + config_file.plot_format), close= True)
+        CMS.SaveCanvas(canvas_ratio,os.path.join(config_file.output_plots_dir, "ZLL", f"{variable[1]}_ratio." + config_file.plot_format), close= True)
 
 if __name__ == "__main__":
     start_time = time.time()
 
     config_file = config.Config()
-    os.makedirs(os.path.join(config_file.output_plots_dir, "ZL"), exist_ok=True)
+    os.makedirs(os.path.join(config_file.output_plots_dir, "ZLL"), exist_ok=True)
 
     path_parts = os.path.normpath(config_file.base_dir).split(os.sep)
     DATA_FILES = [
@@ -242,8 +212,11 @@ if __name__ == "__main__":
             "DoubleMuon_merged.root",
             "SingleMuon_merged.root"
         ]
+
     # Samples will be stacked in this order
     
+    # config_file.add_sample(name="ggZZ", root_file="ggZZ_final_merged.root",cuts=1)
+    # config_file.add_sample(name="qqZZ", root_file="qqZZ_final_merged.root",cuts=1)
     config_file.add_sample(name="WZ", root_file="WZ_final_merged.root",cuts=1)
     config_file.add_sample(name="TTto2L2Nu", root_file="TTto2L2Nu_final_merged.root",cuts=1)
     config_file.add_sample(name="DYJets", root_file="DYJets_final_merged.root",cuts=1)
